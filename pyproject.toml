@@ -1,0 +1,17 @@
+[project]
+name = "authorship-attribution"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Wannes Vantorre", email = "vantorrewannes@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = []
+
+[project.scripts]
+authorship-attribution = "authorship_attribution:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
