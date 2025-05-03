@@ -6,8 +6,12 @@ readme = "README.md"
 authors = [
     { name = "Wannes Vantorre", email = "vantorrewannes@gmail.com" }
 ]
-requires-python = ">=3.14"
-dependencies = []
+requires-python = ">=3.13"
+dependencies = [
+    "torch>=2.7.0",
+    "torchaudio>=2.7.0",
+    "torchvision>=0.22.0",
+]
 
 [project.scripts]
 authorship-attribution = "authorship_attribution:main"

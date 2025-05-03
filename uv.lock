@@ -1,0 +1,200 @@
+version = 1
+revision = 2
+requires-python = ">=3.13"
+
+[[package]]
+name = "authorship-attribution"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "torch" },
+    { name = "torchaudio" },
+    { name = "torchvision" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "torch", specifier = ">=2.7.0" },
+    { name = "torchaudio", specifier = ">=2.7.0" },
+    { name = "torchvision", specifier = ">=0.22.0" },
+]
+
+[[package]]
+name = "filelock"
+version = "3.13.1"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+wheels = [
+    { url = "https://download.pytorch.org/whl/filelock-3.13.1-py3-none-any.whl", hash = "sha256:57dbda9b35157b05fb3e58ee91448612eb674172fab98ee235ccb0b5bee19a1c" },
+]
+
+[[package]]
+name = "fsspec"
+version = "2024.6.1"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+wheels = [
+    { url = "https://download.pytorch.org/whl/fsspec-2024.6.1-py3-none-any.whl", hash = "sha256:3cb443f8bcd2efb31295a5b9fdb02aee81d8452c80d28f97a6d0959e6cee101e" },
+]
+
+[[package]]
+name = "jinja2"
+version = "3.1.4"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+dependencies = [
+    { name = "markupsafe" },
+]
+wheels = [
+    { url = "https://download.pytorch.org/whl/Jinja2-3.1.4-py3-none-any.whl", hash = "sha256:bc5dd2abb727a5319567b7a813e6a2e7318c39f4f487cfe6c89c6f9c7d25197d" },
+]
+
+[[package]]
+name = "markupsafe"
+version = "3.0.2"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+wheels = [
+    { url = "https://download.pytorch.org/whl/MarkupSafe-3.0.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:15ab75ef81add55874e7ab7055e9c397312385bd9ced94920f2802310c930396" },
+]
+
+[[package]]
+name = "mpmath"
+version = "1.3.0"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+wheels = [
+    { url = "https://download.pytorch.org/whl/mpmath-1.3.0-py3-none-any.whl", hash = "sha256:a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c" },
+]
+
+[[package]]
+name = "networkx"
+version = "3.3"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+wheels = [
+    { url = "https://download.pytorch.org/whl/networkx-3.3-py3-none-any.whl", hash = "sha256:28575580c6ebdaf4505b22c6256a2b9de86b316dc63ba9e93abde3d78dfdbcf2" },
+]
+
+[[package]]
+name = "numpy"
+version = "2.1.2"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+wheels = [
+    { url = "https://download.pytorch.org/whl/numpy-2.1.2-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:a84498e0d0a1174f2b3ed769b67b656aa5460c92c9554039e11f20a05650f00d" },
+    { url = "https://download.pytorch.org/whl/numpy-2.1.2-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:4d6ec0d4222e8ffdab1744da2560f07856421b367928026fb540e1945f2eeeaf" },
+    { url = "https://download.pytorch.org/whl/numpy-2.1.2-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:259ec80d54999cc34cd1eb8ded513cb053c3bf4829152a2e00de2371bd406f5e" },
+    { url = "https://download.pytorch.org/whl/numpy-2.1.2-cp313-cp313-macosx_14_0_x86_64.whl", hash = "sha256:675c741d4739af2dc20cd6c6a5c4b7355c728167845e3c6b0e824e4e5d36a6c3" },
+    { url = "https://download.pytorch.org/whl/numpy-2.1.2-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:05b2d4e667895cc55e3ff2b56077e4c8a5604361fc21a042845ea3ad67465aa8" },
+    { url = "https://download.pytorch.org/whl/numpy-2.1.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:43cca367bf94a14aca50b89e9bc2061683116cfe864e56740e083392f533ce7a" },
+    { url = "https://download.pytorch.org/whl/numpy-2.1.2-cp313-cp313-win_amd64.whl", hash = "sha256:f2ded8d9b6f68cc26f8425eda5d3877b47343e68ca23d0d0846f4d312ecaa445" },
+    { url = "https://download.pytorch.org/whl/numpy-2.1.2-cp313-cp313t-macosx_10_13_x86_64.whl", hash = "sha256:2ffef621c14ebb0188a8633348504a35c13680d6da93ab5cb86f4e54b7e922b5" },
+    { url = "https://download.pytorch.org/whl/numpy-2.1.2-cp313-cp313t-macosx_11_0_arm64.whl", hash = "sha256:ad369ed238b1959dfbade9018a740fb9392c5ac4f9b5173f420bd4f37ba1f7a0" },
+    { url = "https://download.pytorch.org/whl/numpy-2.1.2-cp313-cp313t-macosx_14_0_arm64.whl", hash = "sha256:d82075752f40c0ddf57e6e02673a17f6cb0f8eb3f587f63ca1eaab5594da5b17" },
+    { url = "https://download.pytorch.org/whl/numpy-2.1.2-cp313-cp313t-macosx_14_0_x86_64.whl", hash = "sha256:1600068c262af1ca9580a527d43dc9d959b0b1d8e56f8a05d830eea39b7c8af6" },
+    { url = "https://download.pytorch.org/whl/numpy-2.1.2-cp313-cp313t-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a26ae94658d3ba3781d5e103ac07a876b3e9b29db53f68ed7df432fd033358a8" },
+    { url = "https://download.pytorch.org/whl/numpy-2.1.2-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:13311c2db4c5f7609b462bc0f43d3c465424d25c626d95040f073e30f7570e35" },
+]
+
+[[package]]
+name = "pillow"
+version = "11.0.0"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+wheels = [
+    { url = "https://download.pytorch.org/whl/pillow-11.0.0-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:bcd1fb5bb7b07f64c15618c89efcc2cfa3e95f0e3bcdbaf4642509de1942a699" },
+    { url = "https://download.pytorch.org/whl/pillow-11.0.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:0e038b0745997c7dcaae350d35859c9715c71e92ffb7e0f4a8e8a16732150f38" },
+    { url = "https://download.pytorch.org/whl/pillow-11.0.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0ae08bd8ffc41aebf578c2af2f9d8749d91f448b3bfd41d7d9ff573d74f2a6b2" },
+    { url = "https://download.pytorch.org/whl/pillow-11.0.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d69bfd8ec3219ae71bcde1f942b728903cad25fafe3100ba2258b973bd2bc1b2" },
+    { url = "https://download.pytorch.org/whl/pillow-11.0.0-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:61b887f9ddba63ddf62fd02a3ba7add935d053b6dd7d58998c630e6dbade8527" },
+    { url = "https://download.pytorch.org/whl/pillow-11.0.0-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:c6a660307ca9d4867caa8d9ca2c2658ab685de83792d1876274991adec7b93fa" },
+    { url = "https://download.pytorch.org/whl/pillow-11.0.0-cp313-cp313-win_amd64.whl", hash = "sha256:8ba470552b48e5835f1d23ecb936bb7f71d206f9dfeee64245f30c3270b994de" },
+    { url = "https://download.pytorch.org/whl/pillow-11.0.0-cp313-cp313-win_arm64.whl", hash = "sha256:846e193e103b41e984ac921b335df59195356ce3f71dcfd155aa79c603873b84" },
+    { url = "https://download.pytorch.org/whl/pillow-11.0.0-cp313-cp313t-macosx_10_13_x86_64.whl", hash = "sha256:4ad70c4214f67d7466bea6a08061eba35c01b1b89eaa098040a35272a8efb22b" },
+    { url = "https://download.pytorch.org/whl/pillow-11.0.0-cp313-cp313t-macosx_11_0_arm64.whl", hash = "sha256:6ec0d5af64f2e3d64a165f490d96368bb5dea8b8f9ad04487f9ab60dc4bb6003" },
+    { url = "https://download.pytorch.org/whl/pillow-11.0.0-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c809a70e43c7977c4a42aefd62f0131823ebf7dd73556fa5d5950f5b354087e2" },
+    { url = "https://download.pytorch.org/whl/pillow-11.0.0-cp313-cp313t-manylinux_2_28_x86_64.whl", hash = "sha256:4b60c9520f7207aaf2e1d94de026682fc227806c6e1f55bba7606d1c94dd623a" },
+    { url = "https://download.pytorch.org/whl/pillow-11.0.0-cp313-cp313t-win_amd64.whl", hash = "sha256:5c39ed17edea3bc69c743a8dd3e9853b7509625c2462532e62baa0732163a904" },
+    { url = "https://download.pytorch.org/whl/pillow-11.0.0-cp313-cp313t-win_arm64.whl", hash = "sha256:75acbbeb05b86bc53cbe7b7e6fe00fbcf82ad7c684b3ad82e3d711da9ba287d3" },
+]
+
+[[package]]
+name = "pytorch-triton-rocm"
+version = "3.3.0"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+dependencies = [
+    { name = "setuptools" },
+]
+wheels = [
+    { url = "https://download.pytorch.org/whl/pytorch_triton_rocm-3.3.0-cp313-cp313-linux_x86_64.whl", hash = "sha256:43f9b1b062723599bdc235234911166825be0f78ddd2360c4c29c1229e83755f" },
+    { url = "https://download.pytorch.org/whl/pytorch_triton_rocm-3.3.0-cp313-cp313t-linux_x86_64.whl", hash = "sha256:6bd80532d21200ddc8a35ef76ff92d5719193f43e74f905b047671934360031e" },
+]
+
+[[package]]
+name = "setuptools"
+version = "70.2.0"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+wheels = [
+    { url = "https://download.pytorch.org/whl/setuptools-70.2.0-py3-none-any.whl", hash = "sha256:b8b8060bb426838fbe942479c90296ce976249451118ef566a5a0b7d8b78fb05" },
+]
+
+[[package]]
+name = "sympy"
+version = "1.13.3"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+dependencies = [
+    { name = "mpmath" },
+]
+wheels = [
+    { url = "https://download.pytorch.org/whl/sympy-1.13.3-py3-none-any.whl" },
+]
+
+[[package]]
+name = "torch"
+version = "2.7.0+rocm6.3"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+dependencies = [
+    { name = "filelock" },
+    { name = "fsspec" },
+    { name = "jinja2" },
+    { name = "networkx" },
+    { name = "pytorch-triton-rocm", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
+    { name = "setuptools" },
+    { name = "sympy" },
+    { name = "typing-extensions" },
+]
+wheels = [
+    { url = "https://download.pytorch.org/whl/rocm6.3/torch-2.7.0%2Brocm6.3-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:db5b82f4d03f99572211b0bdac5300700b682c470b9d2b1f5daaa5e0104fc5e7" },
+    { url = "https://download.pytorch.org/whl/rocm6.3/torch-2.7.0%2Brocm6.3-cp313-cp313t-manylinux_2_28_x86_64.whl", hash = "sha256:2c93b24a245774f624c54d4ae3b1bf35dd89d774f8e54860474a465786ee9c22" },
+]
+
+[[package]]
+name = "torchaudio"
+version = "2.7.0+rocm6.3"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+dependencies = [
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://download.pytorch.org/whl/rocm6.3/torchaudio-2.7.0%2Brocm6.3-cp313-cp313-linux_x86_64.whl", hash = "sha256:598e2789e9792d1212a4e51856d9afbcd416a6dcd0757d551c6c0556f47ad762" },
+    { url = "https://download.pytorch.org/whl/rocm6.3/torchaudio-2.7.0%2Brocm6.3-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:ffdcffa2bcfb4621dc82b5e3023e26f6dc8d4911f2c4bf2634323dcabdf3feca" },
+    { url = "https://download.pytorch.org/whl/rocm6.3/torchaudio-2.7.0%2Brocm6.3-cp313-cp313t-linux_x86_64.whl", hash = "sha256:3ccdacc264340c17504647e236db1e5cc2053f0637a28964255641e0eb522c9a" },
+    { url = "https://download.pytorch.org/whl/rocm6.3/torchaudio-2.7.0%2Brocm6.3-cp313-cp313t-manylinux_2_28_x86_64.whl", hash = "sha256:5e0c461dc74c803333e3e0bef1b0c29c0b90ec2c628ae4daa5f045ffffadf929" },
+]
+
+[[package]]
+name = "torchvision"
+version = "0.22.0+rocm6.3"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+dependencies = [
+    { name = "numpy" },
+    { name = "pillow" },
+    { name = "torch" },
+]
+wheels = [
+    { url = "https://download.pytorch.org/whl/rocm6.3/torchvision-0.22.0%2Brocm6.3-cp313-cp313-linux_x86_64.whl", hash = "sha256:a8a4bf1cd38ceccb1324b36c6fd748c68806b5f00b8c4c01b924031f24508355" },
+    { url = "https://download.pytorch.org/whl/rocm6.3/torchvision-0.22.0%2Brocm6.3-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:5a4761182ed8db518ffb301b1181aaf7da6764c0b88645742816257986e6a9ba" },
+    { url = "https://download.pytorch.org/whl/rocm6.3/torchvision-0.22.0%2Brocm6.3-cp313-cp313t-linux_x86_64.whl", hash = "sha256:bc3ed9738d0550758812544a6439f97aa4dcadca54e04835315863559aad3882" },
+    { url = "https://download.pytorch.org/whl/rocm6.3/torchvision-0.22.0%2Brocm6.3-cp313-cp313t-manylinux_2_28_x86_64.whl", hash = "sha256:d7afe5ce3d266543ddd83213660e2800adbe3ba2c26ec31c739192278ba5c0bf" },
+]
+
+[[package]]
+name = "typing-extensions"
+version = "4.12.2"
+source = { registry = "https://download.pytorch.org/whl/rocm6.3" }
+wheels = [
+    { url = "https://download.pytorch.org/whl/typing_extensions-4.12.2-py3-none-any.whl", hash = "sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d" },
+]
