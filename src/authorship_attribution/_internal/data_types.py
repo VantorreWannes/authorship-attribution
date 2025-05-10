@@ -1,8 +1,10 @@
 from datetime import datetime
+import os
 from typing import Optional
 
 type AuthorId = int
 type BookId = int
+
 
 class DateRange:
     def __init__(self, start: datetime, end: datetime):
@@ -66,3 +68,10 @@ class Book:
                 yield key, value.isoformat()
             else:
                 yield key, value
+
+    def content(self) -> Optional[str]:
+        content_file_path = os.path.join(self.folder_path, "original.txt")
+        if not os.path.exists(content_file_path):
+            return None
+        with open(content_file_path, "r") as f:
+            return f.read()
