@@ -4,41 +4,6 @@ from typing import Optional
 type AuthorId = int
 type BookId = int
 
-
-class OldAuthor:
-    def __init__(
-        self,
-        id: AuthorId,
-        name: str,
-        birth_date: Optional[datetime],
-        death_date: Optional[datetime],
-        books: list[BookId],
-    ):
-        self.id = id
-        self.name = name
-        self.birth_date = birth_date
-        self.death_date = death_date
-        self.books = books
-
-
-class OldBook:
-    def __init__(
-        self,
-        id: BookId,
-        title: str,
-        authors: list[AuthorId],
-        release_date: Optional[datetime],
-        publication_date: Optional[datetime],
-        content_length: int,
-    ):
-        self.id = id
-        self.title = title
-        self.authors = authors
-        self.release_date = release_date
-        self.publication_date = publication_date
-        self.content_length = content_length
-
-
 class DateRange:
     def __init__(self, start: datetime, end: datetime):
         self.start: datetime = start
