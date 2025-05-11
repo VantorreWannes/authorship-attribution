@@ -1,11 +1,10 @@
-from authorship_attribution._internal import (
+from authorship_attribution.__internal import (
+    BookId,
+    AuthorId,
+    DateRange,
+    Author,
+    Book,
     Json,
-    Average,
-    AverageWordLengthExtractor,
-    AverageWordLengthFeature,
 )
-__all__ = ["Json", "Average", "AverageWordLengthExtractor", "AverageWordLengthFeature"]
 
-
-def main() -> None:
-    print("Hello from authorship-attribution!")
+__all__ = [BookId, AuthorId, DateRange, Author, Book, Json]
