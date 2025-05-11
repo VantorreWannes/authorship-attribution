@@ -1,4 +1,26 @@
-from ._feature_extractors import FeatureExtractor
-from .data_types import Book, Author, AuthorId, BookId
+from ._feature_extractors import (
+    Json,
+    Average,
+    AverageWordLengthExtractor,
+    AverageWordLengthFeature,
+)
 
-_all__ = ["FeatureExtractor", "Book", "Author", "AuthorId", "BookId"]
+from .data_types import (
+    AuthorId,
+    BookId,
+    Author,
+    Book,
+    DateRange,
+)
+
+__all__ = [
+    "Json",
+    "Average",
+    "AverageWordLengthExtractor",
+    "AverageWordLengthFeature",
+    "AuthorId",
+    "BookId",
+    "Author",
+    "Book",
+    "DateRange",
+]

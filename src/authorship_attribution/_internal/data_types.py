@@ -1,5 +1,6 @@
 from datetime import datetime
 import os
+import re
 from typing import Optional
 
 type AuthorId = int
@@ -47,6 +48,7 @@ class Book:
         self,
         id: BookId,
         title: str,
+        language: str,
         author_ids: list[AuthorId],
         release_date: Optional[datetime],
         publication_date: Optional[datetime],
@@ -55,6 +57,7 @@ class Book:
     ):
         self.id: BookId = id
         self.title: str = title
+        self.language: str = language
         self.author_ids: list[AuthorId] = author_ids
         self.release_date: Optional[datetime] = release_date
         self.publication_date: Optional[datetime] = publication_date
@@ -69,9 +72,23 @@ class Book:
             else:
                 yield key, value
 
-    def content(self) -> Optional[str]:
-        content_file_path = os.path.join(self.folder_path, "original.txt")
-        if not os.path.exists(content_file_path):
+    def __get_string_file_content(self, file_name: str) -> Optional[str]:
+        file_path = os.path.join(self.folder_path, file_name)
+        if not os.path.exists(file_path):
             return None
-        with open(content_file_path, "r") as f:
+        with open(file_path, "r") as f:
             return f.read()
+
+    def raw_content(self) -> Optional[str]:
+        return self.__get_string_file_content("original.txt")
+
+    @staticmethod
+    def __normalise(text: str) -> str:
+        subbed_text = re.sub(r"\s+", " ", text)
+        return subbed_text.lower()
+
+    def normalized_content(self) -> Optional[str]:
+        raw_content = self.raw_content()
+        if raw_content is None:
+            return None
+        return Book.__normalise(raw_content)
