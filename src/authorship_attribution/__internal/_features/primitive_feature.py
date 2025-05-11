@@ -13,4 +13,5 @@ class PrimitiveFeature(Feature):
 
     @staticmethod
     def from_json(json_data: Json) -> "PrimitiveFeature":
-        return json.loads(json_data, object_hook=lambda o: PrimitiveFeature(**o))
+        data: dict = json.loads(json_data)
+        return PrimitiveFeature(data["value"])

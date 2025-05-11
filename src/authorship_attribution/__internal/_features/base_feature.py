@@ -8,7 +8,7 @@ class Feature(ABC):
 
     @classmethod
     def name(cls: "Feature") -> str:
-        return cls.__name__.rstrip("Feature")
+        return cls.__name__.removesuffix("Feature")
 
     @classmethod
     def file_name(cls: "Feature") -> str:
