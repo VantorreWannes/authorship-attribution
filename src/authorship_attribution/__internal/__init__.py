@@ -13,6 +13,11 @@ from authorship_attribution.__internal._features import (
     Feature,
     PrimitiveFeature,
     AverageWordLengthFeature,
+    FeatureExtractor,
+    LexicalFeatureExtractor,
+    WordFeatureExtractor,
+    SentenceFeatureExtractor,
+    AverageWordLengthFeatureExtractor,
 )
 
 __all__ = [
@@ -28,4 +33,9 @@ __all__ = [
     Feature,
     PrimitiveFeature,
     AverageWordLengthFeature,
+    FeatureExtractor,
+    LexicalFeatureExtractor,
+    WordFeatureExtractor,
+    SentenceFeatureExtractor,
+    AverageWordLengthFeatureExtractor,
 ]

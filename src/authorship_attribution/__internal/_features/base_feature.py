@@ -1,17 +1,15 @@
 from abc import ABC, abstractmethod
-from authorship_attribution.__internal._data_types import Json
+from authorship_attribution.__internal._data_types.type_aliases import Json
 
 
 class Feature(ABC):
     def __init__(self):
         pass
 
-    @staticmethod
     @classmethod
     def name(cls: "Feature") -> str:
         return cls.__name__.rstrip("Feature")
 
-    @staticmethod
     @classmethod
     def file_name(cls: "Feature") -> str:
         return f"{cls.name()}.json"
@@ -20,8 +18,8 @@ class Feature(ABC):
     def to_json(self) -> Json:
         pass
 
-    @abstractmethod
     @staticmethod
+    @abstractmethod
     def from_json(json_data: Json) -> "Feature":
         pass
 
@@ -30,7 +28,6 @@ class Feature(ABC):
         with open(file_path, "w") as file:
             file.write(json_data)
 
-    @staticmethod
     @classmethod
     def from_file(cls: "Feature", file_path: str) -> "Feature":
         with open(file_path, "r") as file:

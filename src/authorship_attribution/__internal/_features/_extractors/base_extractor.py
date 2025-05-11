@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from authorship_attribution.__internal._features import Feature
+from authorship_attribution.__internal._features.base_feature import Feature
 
 
 class FeatureExtractor(ABC):

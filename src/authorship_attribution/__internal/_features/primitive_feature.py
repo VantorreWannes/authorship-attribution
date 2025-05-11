@@ -1,5 +1,5 @@
-from authorship_attribution.__internal._features import Feature
-from authorship_attribution.__internal._data_types import Json
+from authorship_attribution.__internal._features.base_feature import Feature
+from authorship_attribution.__internal._data_types.type_aliases import Json
 import json
 
 

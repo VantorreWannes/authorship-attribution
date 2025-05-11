@@ -1,5 +1,5 @@
-from authorship_attribution.__internal._data_types import Word
-from authorship_attribution.__internal._features import PrimitiveFeature
+from authorship_attribution.__internal._data_types.type_aliases import Word
+from authorship_attribution.__internal._features.primitive_feature import PrimitiveFeature
 
 
 class AverageWordLengthFeature(PrimitiveFeature):

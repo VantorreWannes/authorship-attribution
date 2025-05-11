@@ -1,4 +1,4 @@
-from authorship_attribution.__internal._features._extractors import FeatureExtractor
+from authorship_attribution.__internal._features._extractors.base_extractor import FeatureExtractor
 
 
 class LexicalFeatureExtractor(FeatureExtractor):

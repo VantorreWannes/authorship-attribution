@@ -1,5 +1,5 @@
-from authorship_attribution.__internal._data_types import Sentence
-from authorship_attribution.__internal._features._extractors import (
+from authorship_attribution.__internal._data_types.type_aliases import Sentence
+from authorship_attribution.__internal._features._extractors.lexical_extrator import (
     LexicalFeatureExtractor,
 )
 

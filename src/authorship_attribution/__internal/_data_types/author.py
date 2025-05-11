@@ -1,5 +1,7 @@
 from typing import Optional
-from authorship_attribution.__internal._data_types import BaseDataClass, AuthorId, BookId, DateRange
+from authorship_attribution.__internal._data_types.base_type import BaseDataClass
+from authorship_attribution.__internal._data_types.date_range import DateRange
+from authorship_attribution.__internal._data_types.type_aliases import AuthorId, BookId
 
 
 class Author(BaseDataClass):
