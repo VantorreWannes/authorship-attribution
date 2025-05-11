@@ -8,10 +8,10 @@ class AverageWordLengthFeatureExtractor(WordFeatureExtractor):
         super().__init__(words)
 
     @staticmethod
-    def __word_length(word: str) -> float:
+    def __word_length(word: str) -> int:
         return len(word)
 
-    def word_lengths(self) -> dict[Word, float]:
+    def word_lengths(self) -> dict[Word, int]:
         return {
             word: AverageWordLengthFeatureExtractor.__word_length(word)
             for word in self.words
