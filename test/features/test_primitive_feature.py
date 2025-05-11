@@ -71,5 +71,5 @@ def test_to_file(feature: PrimitiveFeature, write_path: str):
 
 
 def test_from_file(read_path: str, data: Any):
-    primitive_feature: PrimitiveFeature = PrimitiveFeature.from_file(read_path)
+    primitive_feature: PrimitiveFeature = PrimitiveFeature.from_file(read_path)  # type: ignore
     assert primitive_feature.value == data

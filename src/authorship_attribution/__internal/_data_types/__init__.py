@@ -11,13 +11,13 @@ from authorship_attribution.__internal._data_types.author import Author
 from authorship_attribution.__internal._data_types.book import Book
 
 __all__ = [
-    BookId,
-    AuthorId,
-    DateRange,
-    BaseDataClass,
-    Author,
-    Book,
-    Json,
-    Sentence,
-    Word,
+    "BookId",
+    "AuthorId",
+    "DateRange",
+    "BaseDataClass",
+    "Author",
+    "Book",
+    "Json",
+    "Sentence",
+    "Word",
 ]

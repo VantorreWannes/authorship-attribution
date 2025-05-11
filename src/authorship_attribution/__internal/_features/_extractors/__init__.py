@@ -1,3 +1,8 @@
+from authorship_attribution.__internal._features._extractors.avg_sentence_length_extractor import (
+    AverageSentenceLengthFeatureExtractor,
+    AverageSentenceLengthInCharactersFeatureExtractor,
+    AverageSentenceLengthInWordsFeatureExtractor,
+)
 from authorship_attribution.__internal._features._extractors.avg_word_length_extractor import (
     AverageWordLengthFeatureExtractor,
 )
@@ -15,9 +20,12 @@ from authorship_attribution.__internal._features._extractors.word_extractor impo
 )
 
 __all__ = [
-    FeatureExtractor,
-    LexicalFeatureExtractor,
-    WordFeatureExtractor,
-    SentenceFeatureExtractor,
-    AverageWordLengthFeatureExtractor,
+    "FeatureExtractor",
+    "LexicalFeatureExtractor",
+    "WordFeatureExtractor",
+    "SentenceFeatureExtractor",
+    "AverageWordLengthFeatureExtractor",
+    "AverageSentenceLengthFeatureExtractor",
+    "AverageSentenceLengthInWordsFeatureExtractor",
+    "AverageSentenceLengthInCharactersFeatureExtractor",
 ]

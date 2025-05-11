@@ -18,21 +18,22 @@ from authorship_attribution import (
     AverageWordLengthFeatureExtractor,
 )
 
-if __name__ == "__main__":
-    print(BookId)
-    print(AuthorId)
-    print(DateRange)
-    print(BaseDataClass)
-    print(Author)
-    print(Book)
-    print(Json)
-    print(Sentence)
-    print(Word)
-    print(Feature)
-    print(PrimitiveFeature)
-    print(AverageWordLengthFeature)
-    print(FeatureExtractor)
-    print(LexicalFeatureExtractor)
-    print(WordFeatureExtractor)
-    print(SentenceFeatureExtractor)
-    print(AverageWordLengthFeatureExtractor)
+
+def test_imports():
+    assert BookId is not None
+    assert AuthorId is not None
+    assert DateRange is not None
+    assert BaseDataClass is not None
+    assert Author is not None
+    assert Book is not None
+    assert Json is not None
+    assert Sentence is not None
+    assert Word is not None
+    assert Feature is not None
+    assert PrimitiveFeature is not None
+    assert AverageWordLengthFeature is not None
+    assert FeatureExtractor is not None
+    assert LexicalFeatureExtractor is not None
+    assert WordFeatureExtractor is not None
+    assert SentenceFeatureExtractor is not None
+    assert AverageWordLengthFeatureExtractor is not None

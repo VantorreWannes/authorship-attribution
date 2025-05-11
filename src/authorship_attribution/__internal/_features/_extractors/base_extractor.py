@@ -9,4 +9,3 @@ class FeatureExtractor(ABC):
     @abstractmethod
     def feature(self) -> Feature:
         pass
-        

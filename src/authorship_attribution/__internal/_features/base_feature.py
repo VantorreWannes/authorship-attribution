@@ -7,11 +7,11 @@ class Feature(ABC):
         pass
 
     @classmethod
-    def name(cls: "Feature") -> str:
+    def name(cls) -> str:
         return cls.__name__.removesuffix("Feature")
 
     @classmethod
-    def file_name(cls: "Feature") -> str:
+    def file_name(cls) -> str:
         return f"{cls.name()}.json"
 
     @abstractmethod
@@ -29,7 +29,7 @@ class Feature(ABC):
             file.write(json_data)
 
     @classmethod
-    def from_file(cls: "Feature", file_path: str) -> "Feature":
+    def from_file(cls, file_path: str) -> "Feature":
         with open(file_path, "r") as file:
             json_data = file.read()
             return cls.from_json(json_data)

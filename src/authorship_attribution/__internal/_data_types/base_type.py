@@ -3,7 +3,6 @@ from datetime import datetime
 
 
 class BaseDataClass(ABC):
-
     def __iter__(self):
         for key in self.__dict__:
             value = getattr(self, key)
