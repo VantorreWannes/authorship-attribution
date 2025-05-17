@@ -9,6 +9,7 @@ wheels/
 # Virtual environments
 .venv
 
-# Temp Files
-data/
+# Custom
+.data/
 typings/
+.howto/
