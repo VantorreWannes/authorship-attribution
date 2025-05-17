@@ -19,6 +19,10 @@ from authorship_attribution.__internal._features._extractors.word_extractor impo
     WordFeatureExtractor,
 )
 
+from authorship_attribution.__internal._features._extractors.type_token_ratio_extractor import (
+    TypeTokenRatioFeatureExtractor,
+)
+
 __all__ = [
     "FeatureExtractor",
     "LexicalFeatureExtractor",
@@ -28,4 +32,5 @@ __all__ = [
     "AverageSentenceLengthFeatureExtractor",
     "AverageSentenceLengthInWordsFeatureExtractor",
     "AverageSentenceLengthInCharactersFeatureExtractor",
+    "TypeTokenRatioFeatureExtractor",
 ]

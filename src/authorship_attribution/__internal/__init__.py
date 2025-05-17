@@ -24,6 +24,8 @@ from authorship_attribution.__internal._features import (
     AverageSentenceLengthFeature,
     AverageSentenceLengthInWordsFeature,
     AverageSentenceLengthInCharactersFeature,
+    TypeTokenRatioFeature,
+    TypeTokenRatioFeatureExtractor,
 )
 
 __all__ = [
@@ -50,4 +52,6 @@ __all__ = [
     "AverageSentenceLengthFeature",
     "AverageSentenceLengthInWordsFeature",
     "AverageSentenceLengthInCharactersFeature",
+    "TypeTokenRatioFeature",
+    "TypeTokenRatioFeatureExtractor",
 ]

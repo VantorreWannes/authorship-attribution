@@ -8,6 +8,9 @@ from authorship_attribution.__internal._features._extractors import (
     AverageSentenceLengthInWordsFeatureExtractor,
     AverageSentenceLengthInCharactersFeatureExtractor,
 )
+from authorship_attribution.__internal._features._extractors.type_token_ratio_extractor import (
+    TypeTokenRatioFeatureExtractor,
+)
 from authorship_attribution.__internal._features.average_word_length_feature import (
     AverageWordLengthFeature,
 )
@@ -19,6 +22,9 @@ from authorship_attribution.__internal._features.average_sentence_length_feature
     AverageSentenceLengthFeature,
     AverageSentenceLengthInWordsFeature,
     AverageSentenceLengthInCharactersFeature,
+)
+from authorship_attribution.__internal._features.type_token_ratio_feature import (
+    TypeTokenRatioFeature,
 )
 
 __all__ = [
@@ -37,4 +43,6 @@ __all__ = [
     "AverageSentenceLengthFeature",
     "AverageSentenceLengthInWordsFeature",
     "AverageSentenceLengthInCharactersFeature",
+    "TypeTokenRatioFeature",
+    "TypeTokenRatioFeatureExtractor",
 ]

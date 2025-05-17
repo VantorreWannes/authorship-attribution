@@ -15,4 +15,4 @@ class PrimitiveFeature(Feature):
     @staticmethod
     def from_json(json_data: Json) -> "PrimitiveFeature":
         data: dict = json.loads(json_data)
-        return PrimitiveFeature(data["value"])
+        return PrimitiveFeature(**data)
