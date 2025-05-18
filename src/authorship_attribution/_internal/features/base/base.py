@@ -1,6 +1,7 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 import json
 import re
+from typing import Any, Generator
 
 from authorship_attribution._internal.types.aliases import Json
 
@@ -14,14 +15,12 @@ class Feature(ABC):
     def file_name(cls) -> str:
         return f"{cls.name()}.json"
 
-    @abstractmethod
     def to_json(self) -> Json:
-        pass
+        return dict[str, Any](self)
 
     @classmethod
-    @abstractmethod
     def from_json(cls, data: Json) -> "Feature":
-        pass
+        return cls(**data)
 
     def to_file(self, path: str) -> None:
         json_data = self.to_json()
@@ -33,3 +32,7 @@ class Feature(ABC):
         with open(file_path, "r") as file:
             json_data = json.load(file)
             return cls.from_json(json_data)
+
+    def __iter__(self) -> Generator[tuple[str, Any], Any, None]:
+        for key in self.__dict__:
+            yield key, getattr(self, key)
