@@ -7,7 +7,9 @@ authors = [
     { name = "Wannes Vantorre", email = "vantorrewannes@gmail.com" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "nltk>=3.9.1",
+]
 
 [project.scripts]
 authorship-attribution = "authorship_attribution:main"
