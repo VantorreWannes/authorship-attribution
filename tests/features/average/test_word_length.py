@@ -4,7 +4,6 @@ from authorship_attribution._internal.features.average.word_length import (
     AverageWordLengthFeature,
 )
 
-
 @fixture
 def name() -> Literal["average_word_length_feature"]:
     return "average_word_length_feature"
