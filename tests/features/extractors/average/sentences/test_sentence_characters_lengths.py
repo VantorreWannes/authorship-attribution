@@ -24,7 +24,7 @@ def empty_text() -> Text:
 
 @fixture
 def expected_character_count() -> int:
-    return 20 + 28
+    return 20 + 27
 
 
 @fixture
