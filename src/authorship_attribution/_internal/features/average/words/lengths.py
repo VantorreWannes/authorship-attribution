@@ -8,4 +8,6 @@ class AverageWordLengthFeature(Feature):
         self.summed_word_lengths = summed_word_lengths
 
     def average_word_length(self) -> float:
+        if self.word_count == 0:
+            return 0.0
         return self.summed_word_lengths / self.word_count
