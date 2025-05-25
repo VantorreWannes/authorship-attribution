@@ -1,47 +1,84 @@
-from typing import Literal
+from authorship_attribution._internal.features.average.sentences.characters import (
+    AverageSentenceLengthInCharactersFeature,
+)
 
+
+from typing import Literal
+from pytest import fixture, approx
 
 from authorship_attribution._internal.features.extractors.average.sentences.characters import (
     AverageSentenceLengthInCharactersFeatureExtractor,
 )
 from authorship_attribution._internal.types.aliases import Text
-from pytest import fixture
 
 
 @fixture
-def text() -> Text:
-    return "This is a test text. This is a test text."
+def sample_text() -> Text:
+    return "This is a test text. This is a second test text."
 
 
 @fixture
-def character_count() -> Literal[40]:
-    return 40
+def empty_text() -> Text:
+    return ""
 
 
 @fixture
-def sentence_count() -> Literal[2]:
+def expected_character_count() -> int:
+    return 20 + 28
+
+
+@fixture
+def expected_sentence_count() -> Literal[2]:
     return 2
 
 
 @fixture
-def average_sentence_length_in_characters_feature_extractor(
-    text: Text,
+def extractor(
+    sample_text: Text,
+) -> AverageSentenceLengthInCharactersFeatureExtractor:  # Renamed
+    return AverageSentenceLengthInCharactersFeatureExtractor(sample_text)
+
+
+@fixture
+def empty_extractor(
+    empty_text: Text,
 ) -> AverageSentenceLengthInCharactersFeatureExtractor:
-    return AverageSentenceLengthInCharactersFeatureExtractor(text)
+    return AverageSentenceLengthInCharactersFeatureExtractor(empty_text)
 
 
 def test_character_count(
-    average_sentence_length_in_characters_feature_extractor: AverageSentenceLengthInCharactersFeatureExtractor,
-    character_count: Literal[40],
+    extractor: AverageSentenceLengthInCharactersFeatureExtractor,
+    expected_character_count: int,
 ) -> None:
-    assert average_sentence_length_in_characters_feature_extractor.character_count() == character_count
+    assert extractor.character_count() == expected_character_count
 
 
 def test_sentence_count(
-    average_sentence_length_in_characters_feature_extractor: AverageSentenceLengthInCharactersFeatureExtractor,
-    sentence_count: Literal[2],
+    extractor: AverageSentenceLengthInCharactersFeatureExtractor,
+    expected_sentence_count: Literal[2],
 ) -> None:
-    assert (
-        average_sentence_length_in_characters_feature_extractor.sentence_count()
-        == sentence_count
+    assert extractor.sentence_count() == expected_sentence_count
+
+
+def test_feature_extraction(
+    extractor: AverageSentenceLengthInCharactersFeatureExtractor,
+    expected_character_count: int,
+    expected_sentence_count: Literal[2],
+) -> None:
+    feature: AverageSentenceLengthInCharactersFeature = extractor.feature()
+    assert feature.character_count == expected_character_count
+    assert feature.sentence_count == expected_sentence_count
+    assert feature.average_sentence_length_in_characters() == approx(
+        expected_character_count / expected_sentence_count
     )
+
+
+def test_empty_text_extraction(
+    empty_extractor: AverageSentenceLengthInCharactersFeatureExtractor,
+) -> None:
+    assert empty_extractor.character_count() == 0
+    assert empty_extractor.sentence_count() == 0
+    feature: AverageSentenceLengthInCharactersFeature = empty_extractor.feature()
+    assert feature.character_count == 0
+    assert feature.sentence_count == 0
+    assert feature.average_sentence_length_in_characters() == approx(0.0)
