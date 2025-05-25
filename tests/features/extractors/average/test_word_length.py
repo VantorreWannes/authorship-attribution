@@ -1,4 +1,4 @@
-from authorship_attribution._internal.features.extractors.average.word_length import (
+from authorship_attribution._internal.features.extractors.average.word_lengths import (
     AverageWordLengthFeatureExtractor,
 )
 from authorship_attribution._internal.types.aliases import Text

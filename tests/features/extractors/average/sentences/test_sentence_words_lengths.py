@@ -1,7 +1,7 @@
 from typing import Literal
 
 
-from authorship_attribution._internal.features.extractors.average.sentence.words import (
+from authorship_attribution._internal.features.extractors.average.sentences.words import (
     AverageSentenceLengthInWordsFeatureExtractor,
 )
 from authorship_attribution._internal.types.aliases import Text

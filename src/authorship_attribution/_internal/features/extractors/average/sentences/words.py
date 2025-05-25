@@ -1,8 +1,8 @@
 from nltk.tokenize import word_tokenize
-from authorship_attribution._internal.features.average.sentence.words import (
+from authorship_attribution._internal.features.average.sentences.words import (
     AverageSentenceLengthInWordsFeature,
 )
-from authorship_attribution._internal.features.extractors.base.sentence import (
+from authorship_attribution._internal.features.extractors.base.sentences import (
     SentenceFeatureExtractor,
 )
 from authorship_attribution._internal.types.aliases import Text
