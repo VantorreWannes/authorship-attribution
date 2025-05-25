@@ -1,39 +1,42 @@
-from typing import Any, Literal
+from typing import Literal
 from pytest import fixture
 from authorship_attribution._internal.features.base.base import Feature
+from authorship_attribution._internal.types.aliases import Json
 
 
 @fixture
-def name() -> Literal["feature"]:
+def feature_name_val() -> Literal["feature"]:
     return "feature"
 
 
 @fixture
-def file_name() -> Literal["feature.json"]:
+def feature_file_name_val() -> Literal["feature.json"]:
     return "feature.json"
 
 
 @fixture
-def json() -> dict[Any, Any]:
+def empty_json_data() -> Json:
     return {}
 
 
 @fixture
-def feature() -> Feature:
+def base_feature_instance() -> Feature:
     return Feature()
 
 
-def test_name(name: Literal["feature"]) -> None:
-    assert Feature.name() == name
+def test_name(feature_name_val: Literal["feature"]) -> None:
+    assert Feature.name() == feature_name_val
 
 
-def test_file_name(file_name: Literal["feature.json"]) -> None:
-    assert Feature.file_name() == file_name
+def test_file_name(feature_file_name_val: Literal["feature.json"]) -> None:
+    assert Feature.file_name() == feature_file_name_val
 
 
-def test_to_json(json) -> None:
-    assert Feature().to_json() == json
+def test_to_json(base_feature_instance: Feature, empty_json_data: Json) -> None:
+    assert base_feature_instance.to_json() == empty_json_data
 
 
-def test_from_json(json) -> None:
-    assert Feature.from_json(json)
+def test_from_json(empty_json_data: Json) -> None:
+    feature_instance = Feature.from_json(empty_json_data)
+    assert isinstance(feature_instance, Feature)
+    assert feature_instance.to_json() == empty_json_data
