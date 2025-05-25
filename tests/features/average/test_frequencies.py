@@ -19,12 +19,12 @@ def file_name() -> Literal["character_frequencies_feature.json"]:
 
 @fixture
 def sample_character_counts() -> dict[str, int]:
-    return {"a": 10, "b": 5, "c": 15}
+    return {"a": 1, "b": 2, "c": 3}
 
 
 @fixture
 def sample_all_characters_count() -> int:
-    return 30
+    return 6
 
 
 @fixture
@@ -32,8 +32,8 @@ def json_data(
     sample_character_counts: dict[str, int], sample_all_characters_count: int
 ) -> Json:
     return {
-        "char_counts": sample_character_counts,
-        "total_alphabetic_chars": sample_all_characters_count,
+        "character_counts": sample_character_counts,
+        "all_characters_count": sample_all_characters_count,
     }
 
 
