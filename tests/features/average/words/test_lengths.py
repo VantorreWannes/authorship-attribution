@@ -1,8 +1,9 @@
 from typing import Any, Literal
 from pytest import fixture
-from authorship_attribution._internal.features.average.word_length import (
+from authorship_attribution._internal.features.average.words.lengths import (
     AverageWordLengthFeature,
 )
+
 
 @fixture
 def name() -> Literal["average_word_length_feature"]:

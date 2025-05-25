@@ -1,7 +1,7 @@
-from authorship_attribution._internal.features.average.sentence.characters import (
+from authorship_attribution._internal.features.average.sentences.characters import (
     AverageSentenceLengthInCharactersFeature,
 )
-from authorship_attribution._internal.features.extractors.base.sentence import (
+from authorship_attribution._internal.features.extractors.base.sentences import (
     SentenceFeatureExtractor,
 )
 from authorship_attribution._internal.types.aliases import Text

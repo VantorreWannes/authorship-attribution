@@ -1,6 +1,9 @@
 from typing import override
-from authorship_attribution._internal.features.average.word_length import AverageWordLengthFeature
-from authorship_attribution._internal.features.extractors.base.word import (
+
+from authorship_attribution._internal.features.average.words.lengths import (
+    AverageWordLengthFeature,
+)
+from authorship_attribution._internal.features.extractors.base.words import (
     WordFeatureExtractor,
 )
 from authorship_attribution._internal.types.aliases import Text

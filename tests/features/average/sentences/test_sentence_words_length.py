@@ -1,6 +1,6 @@
 from typing import Any, Literal
 from pytest import fixture
-from authorship_attribution._internal.features.average.sentence.words import (
+from authorship_attribution._internal.features.average.sentences.words import (
     AverageSentenceLengthInWordsFeature,
 )
 
