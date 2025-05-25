@@ -1,8 +1,9 @@
-from typing import Any, Literal
-from pytest import fixture
+from typing import Literal
+from pytest import fixture, approx
 from authorship_attribution._internal.features.average.sentences.words import (
     AverageSentenceLengthInWordsFeature,
 )
+from authorship_attribution._internal.types.aliases import Json
 
 
 @fixture
@@ -22,11 +23,11 @@ def word_count() -> int:
 
 @fixture
 def sentence_count() -> int:
-    return 1000
+    return 10
 
 
 @fixture
-def json(word_count: int, sentence_count: int) -> dict[Any, Any]:
+def json_data(word_count: int, sentence_count: int) -> Json:
     return {"word_count": word_count, "sentence_count": sentence_count}
 
 
@@ -41,15 +42,38 @@ def test_name(name: Literal["average_sentence_length_in_words_feature"]) -> None
     assert AverageSentenceLengthInWordsFeature.name() == name
 
 
-def test_file_name(file_name: Literal["average_sentence_length_in_words_feature.json"]) -> None:
+def test_file_name(
+    file_name: Literal["average_sentence_length_in_words_feature.json"],
+) -> None:
     assert AverageSentenceLengthInWordsFeature.file_name() == file_name
 
 
 def test_to_json(
-    average_word_length_feature: AverageSentenceLengthInWordsFeature, json
+    average_word_length_feature: AverageSentenceLengthInWordsFeature, json_data: Json
 ) -> None:
-    assert average_word_length_feature.to_json() == json
+    assert average_word_length_feature.to_json() == json_data
 
 
-def test_from_json(json) -> None:
-    assert AverageSentenceLengthInWordsFeature.from_json(json)
+def test_from_json(json_data: Json, word_count: int, sentence_count: int) -> None:
+    feature = AverageSentenceLengthInWordsFeature.from_json(json_data)
+    assert isinstance(feature, AverageSentenceLengthInWordsFeature)
+    assert feature.word_count == word_count
+    assert feature.sentence_count == sentence_count
+
+
+def test_average_calculation(
+    average_word_length_feature: AverageSentenceLengthInWordsFeature,
+) -> None:
+    assert average_word_length_feature.average_sentence_length_in_words() == approx(
+        10.0
+    )
+
+
+def test_average_calculation_zero_sentences() -> None:
+    feature = AverageSentenceLengthInWordsFeature(word_count=0, sentence_count=0)
+    assert feature.average_sentence_length_in_words() == approx(0.0)
+
+    feature_with_words = AverageSentenceLengthInWordsFeature(
+        word_count=50, sentence_count=0
+    )
+    assert feature_with_words.average_sentence_length_in_words() == approx(0.0)
