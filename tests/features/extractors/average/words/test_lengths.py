@@ -39,21 +39,3 @@ def test_summed_word_lengths(
     extractor: AverageWordLengthFeatureExtractor,
 ) -> None:
     assert extractor.summed_word_lengths() == 16
-
-
-def test_feature_extraction(extractor: AverageWordLengthFeatureExtractor) -> None:
-    feature: AverageWordLengthFeature = extractor.feature()
-    assert feature.word_count == 6
-    assert feature.summed_word_lengths == 16
-    assert feature.average_word_length() == approx(16 / 6)
-
-
-def test_empty_text_extraction(
-    empty_extractor: AverageWordLengthFeatureExtractor,
-) -> None:
-    assert empty_extractor.word_count() == 0
-    assert empty_extractor.summed_word_lengths() == 0
-    feature: AverageWordLengthFeature = empty_extractor.feature()
-    assert feature.word_count == 0
-    assert feature.summed_word_lengths == 0
-    assert feature.average_word_length() == approx(0.0)

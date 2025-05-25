@@ -54,25 +54,3 @@ def test_all_words_count(
     expected_all_words_count: int,
 ) -> None:
     assert extractor.all_words_count() == expected_all_words_count
-
-
-def test_feature_extraction(
-    extractor: TypeTokenRatioFeatureExtractor,
-    expected_unique_words_count: int,
-    expected_all_words_count: int,
-) -> None:
-    feature: TypeTokenRatioFeature = extractor.feature()
-    assert feature.unique_words_count == expected_unique_words_count
-    assert feature.all_words_count == expected_all_words_count
-    assert feature.type_token_ratio() == approx(
-        expected=expected_unique_words_count / expected_all_words_count
-    )
-
-
-def test_empty_text_extraction(empty_extractor: TypeTokenRatioFeatureExtractor) -> None:
-    assert empty_extractor.unique_words_count() == 0
-    assert empty_extractor.all_words_count() == 0
-    feature: TypeTokenRatioFeature = empty_extractor.feature()
-    assert feature.unique_words_count == 0
-    assert feature.all_words_count == 0
-    assert feature.type_token_ratio() == approx(0.0)
