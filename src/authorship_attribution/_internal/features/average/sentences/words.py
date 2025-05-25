@@ -8,4 +8,6 @@ class AverageSentenceLengthInWordsFeature(Feature):
         self.sentence_count = sentence_count
 
     def average_sentence_length_in_words(self) -> float:
+        if self.sentence_count == 0:
+            return 0.0
         return self.word_count / self.sentence_count
