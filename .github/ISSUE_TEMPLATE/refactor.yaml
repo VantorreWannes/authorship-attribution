@@ -1,0 +1,44 @@
+name: Refactor
+description: Template for documenting new features
+title: '[Refactor]: '
+labels:
+  - enhancement
+  - refactor
+body:
+  - type: textarea
+    id: desc
+    attributes:
+      label: Description
+      description: Extra information the assignee needs to know about.
+      placeholder: >-
+        A quick description of the refactoring, why it is needed or general
+        required information.
+      render: Markdown
+  - type: textarea
+    id: todo
+    attributes:
+      label: Todo
+      description: Description of the work to be done to implement this refactoring.
+      placeholder: '- [ ] Etc...'
+      value: '- [ ] '
+      render: Markdown
+    validations:
+      required: true
+  - type: checkboxes
+    id: dod
+    attributes:
+      label: Definition Of Done
+      description: Steps have to complete before submitting a PR
+      options:
+        - label: Add proper Issue metadata
+          required: false
+        - label: Run Ruff from workspace root
+          required: false
+        - label: Create unit tests for new code
+          required: false
+        - label: Adjust unit tests for updated code
+          required: false
+        - label: Remove unit tests for removed code
+          required: false
+        - label: Add proper Pull Request metadata
+          required: false
