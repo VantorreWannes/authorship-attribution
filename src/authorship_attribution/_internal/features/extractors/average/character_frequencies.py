@@ -1,5 +1,4 @@
-import string
-from typing import override
+from typing import Counter, override
 
 from authorship_attribution._internal.features.extractors.base.lexical import (
     LexicalFeatureExtractor,
@@ -15,14 +14,14 @@ class CharacterFrequenciesFeatureExtractor(LexicalFeatureExtractor):
         super().__init__(text)
         self.normalised_text: Text = self.text.lower()
 
-    def character_counts(self) -> dict[str, int]:
-        return {char: self.normalised_text.count(char) for char in self.normalised_text}
+    def character_counts(self) -> Counter[str]:
+        return Counter[str](self.normalised_text)
 
     def all_characters_count(self) -> int:
         return len(self.normalised_text)
 
     @override
     def feature(self) -> CharacterFrequenciesFeature:
-        character_counts: dict[str, int] = self.character_counts()
+        character_counts: Counter[str] = self.character_counts()
         all_characters_count: int = self.all_characters_count()
         return CharacterFrequenciesFeature(character_counts, all_characters_count)
