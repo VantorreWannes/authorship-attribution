@@ -1,6 +1,6 @@
 from pytest import fixture
 
-from authorship_attribution._internal.features.extractors.average.frequencies import (
+from authorship_attribution._internal.features.extractors.average.character_frequencies import (
     CharacterFrequenciesFeatureExtractor,
 )
 from authorship_attribution._internal.types.aliases import Text
