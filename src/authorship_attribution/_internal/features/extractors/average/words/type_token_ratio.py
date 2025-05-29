@@ -1,7 +1,4 @@
-from collections import Counter
-
-
-from typing import Counter, override
+from typing import override
 
 from authorship_attribution._internal.features.average.words.type_token_ratio import (
     TypeTokenRatioFeature,
