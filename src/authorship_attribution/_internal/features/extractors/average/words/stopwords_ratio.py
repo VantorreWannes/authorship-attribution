@@ -9,7 +9,7 @@ from authorship_attribution._internal.features.average.words.stopwords_ratio imp
 )
 from authorship_attribution._internal.types.aliases import Text
 
-ENGLISH_STOPWORDS = set(stopwords.words("english"))
+ENGLISH_STOPWORDS = set[str](stopwords.words("english"))
 
 
 class StopwordsRatioFeatureExtractor(WordFeatureExtractor):
