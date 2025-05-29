@@ -17,8 +17,8 @@ def extractor(sample_text: Text) -> CharacterFrequenciesFeatureExtractor:
 
 
 def test_character_counts(extractor: CharacterFrequenciesFeatureExtractor) -> None:
-    assert extractor.character_counts() == {"a": 1, "b": 2, "c": 3}
+    assert extractor.character_counts() == {"a": 1, "b": 2, "c": 3, '.': 4}
 
 
 def test_all_characters_count(extractor: CharacterFrequenciesFeatureExtractor) -> None:
-    assert extractor.all_characters_count() == 6
+    assert extractor.all_characters_count() == 10
