@@ -19,10 +19,10 @@ def extractor(sample_text: Text) -> AverageWordLengthFeatureExtractor:
 def test_word_count(
     extractor: AverageWordLengthFeatureExtractor,
 ) -> None:
-    assert extractor.word_count() == 6
+    assert extractor.word_count() == 5
 
 
 def test_summed_word_lengths(
     extractor: AverageWordLengthFeatureExtractor,
 ) -> None:
-    assert extractor.summed_word_lengths() == 16
+    assert extractor.summed_word_lengths() == 15

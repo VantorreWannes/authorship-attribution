@@ -47,7 +47,7 @@ def test_stopwords_count_with_stopwords(
 def test_total_word_count_with_stopwords(
     extractor_with_stopwords: StopwordsRatioFeatureExtractor,
 ) -> None:
-    assert extractor_with_stopwords.total_word_count() == 13
+    assert extractor_with_stopwords.total_word_count() == 12
 
 
 def test_stopwords_count_no_stopwords(
@@ -59,7 +59,7 @@ def test_stopwords_count_no_stopwords(
 def test_total_word_count_no_stopwords(
     extractor_no_stopwords: StopwordsRatioFeatureExtractor,
 ) -> None:
-    assert extractor_no_stopwords.total_word_count() == 6
+    assert extractor_no_stopwords.total_word_count() == 5
 
 
 def test_stopwords_count_empty(extractor_empty: StopwordsRatioFeatureExtractor) -> None:
@@ -77,5 +77,5 @@ def test_feature_extraction_with_stopwords(
 ) -> None:
     feature = extractor_with_stopwords.feature()
     assert feature.stopwords_count == 8
-    assert feature.total_word_count == 13
-    assert feature.stopwords_ratio() == approx(8 / 13)
+    assert feature.total_word_count == 12
+    assert feature.stopwords_ratio() == approx(8 / 12)

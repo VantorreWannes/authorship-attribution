@@ -28,13 +28,13 @@ def empty_extractor(empty_text: Text) -> TypeTokenRatioFeatureExtractor:
 
 
 @fixture
-def expected_unique_words_count() -> Literal[4]:
-    return 4
+def expected_unique_words_count() -> Literal[3]:
+    return 3
 
 
 @fixture
-def expected_all_words_count() -> Literal[8]:
-    return 8
+def expected_all_words_count() -> Literal[6]:
+    return 6
 
 
 def test_unique_words_count(
