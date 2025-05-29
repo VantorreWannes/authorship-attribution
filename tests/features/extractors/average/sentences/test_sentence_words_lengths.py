@@ -1,4 +1,6 @@
-from authorship_attribution._internal.features.average.sentences.words import AverageSentenceLengthInWordsFeature
+from authorship_attribution._internal.features.average.sentences.words import (
+    AverageSentenceLengthInWordsFeature,
+)
 
 
 from typing import Literal
@@ -31,7 +33,9 @@ def expected_sentence_count() -> Literal[2]:
 
 
 @fixture
-def extractor(sample_text: Text) -> AverageSentenceLengthInWordsFeatureExtractor: # Renamed
+def extractor(
+    sample_text: Text,
+) -> AverageSentenceLengthInWordsFeatureExtractor:  # Renamed
     return AverageSentenceLengthInWordsFeatureExtractor(sample_text)
 
 
@@ -62,10 +66,14 @@ def test_feature_extraction(
     feature: AverageSentenceLengthInWordsFeature = extractor.feature()
     assert feature.word_count == expected_word_count
     assert feature.sentence_count == expected_sentence_count
-    assert feature.average_sentence_length_in_words() == approx(expected_word_count / expected_sentence_count)
+    assert feature.average_sentence_length_in_words() == approx(
+        expected_word_count / expected_sentence_count
+    )
 
 
-def test_empty_text_extraction(empty_extractor: AverageSentenceLengthInWordsFeatureExtractor) -> None:
+def test_empty_text_extraction(
+    empty_extractor: AverageSentenceLengthInWordsFeatureExtractor,
+) -> None:
     assert empty_extractor.word_count() == 0
     assert empty_extractor.sentence_count() == 0
     feature: AverageSentenceLengthInWordsFeature = empty_extractor.feature()

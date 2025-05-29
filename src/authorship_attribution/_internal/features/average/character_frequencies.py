@@ -1,5 +1,6 @@
 from authorship_attribution._internal.features.base.base import Feature
 
+
 class CharacterFrequenciesFeature(Feature):
     def __init__(
         self, character_counts: dict[str, int], all_characters_count: int
