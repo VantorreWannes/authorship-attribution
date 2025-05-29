@@ -1,5 +1,5 @@
 name: Refactor
-description: Template for documenting new features
+description: Template for documenting new refactorings
 title: '[Refactor]: '
 labels:
   - enhancement
