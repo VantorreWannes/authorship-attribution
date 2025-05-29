@@ -1,10 +1,5 @@
-from authorship_attribution._internal.features.average.words.type_token_ratio import (
-    TypeTokenRatioFeature,
-)
-
-
 from typing import Literal
-from pytest import fixture, approx
+from pytest import fixture
 
 from authorship_attribution._internal.features.extractors.average.words.type_token_ratio import (
     TypeTokenRatioFeatureExtractor,

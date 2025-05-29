@@ -10,14 +10,17 @@ from authorship_attribution._internal.types.aliases import Text
 def sample_text() -> Text:
     return "This is a test text."
 
+
 @fixture
 def extractor(sample_text: Text) -> AverageWordLengthFeatureExtractor:
     return AverageWordLengthFeatureExtractor(sample_text)
+
 
 def test_word_count(
     extractor: AverageWordLengthFeatureExtractor,
 ) -> None:
     assert extractor.word_count() == 6
+
 
 def test_summed_word_lengths(
     extractor: AverageWordLengthFeatureExtractor,

@@ -27,9 +27,7 @@ def sentence_count() -> int:
 
 
 @fixture
-def json_data(
-    character_count: int, sentence_count: int
-) -> Json:
+def json_data(character_count: int, sentence_count: int) -> Json:
     return {"character_count": character_count, "sentence_count": sentence_count}
 
 

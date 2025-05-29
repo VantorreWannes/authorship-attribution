@@ -49,11 +49,15 @@ def test_file_name(file_name: Literal["type_token_ratio_feature.json"]) -> None:
     assert TypeTokenRatioFeature.file_name() == file_name
 
 
-def test_to_json(type_token_ratio_feature: TypeTokenRatioFeature, json_data: Json) -> None:
+def test_to_json(
+    type_token_ratio_feature: TypeTokenRatioFeature, json_data: Json
+) -> None:
     assert type_token_ratio_feature.to_json() == json_data
 
 
-def test_from_json(json_data: Json, unique_words_count: int, all_words_count: int) -> None:
+def test_from_json(
+    json_data: Json, unique_words_count: int, all_words_count: int
+) -> None:
     feature = TypeTokenRatioFeature.from_json(json_data)
     assert isinstance(feature, TypeTokenRatioFeature)
     assert feature.unique_words_count == unique_words_count
@@ -68,5 +72,7 @@ def test_ratio_calculation_zero_words() -> None:
     feature = TypeTokenRatioFeature(unique_words_count=0, all_words_count=0)
     assert feature.type_token_ratio() == approx(0.0)
 
-    feature_with_unique = TypeTokenRatioFeature(unique_words_count=10, all_words_count=0)
+    feature_with_unique = TypeTokenRatioFeature(
+        unique_words_count=10, all_words_count=0
+    )
     assert feature_with_unique.type_token_ratio() == approx(0.0)

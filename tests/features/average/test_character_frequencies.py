@@ -1,7 +1,7 @@
 from typing import Literal
 from pytest import fixture
 
-from authorship_attribution._internal.features.average.frequencies import (
+from authorship_attribution._internal.features.average.character_frequencies import (
     CharacterFrequenciesFeature,
 )
 from authorship_attribution._internal.types.aliases import Json
