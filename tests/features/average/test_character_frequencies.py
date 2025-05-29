@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Counter, Literal
 from pytest import fixture
 
 from authorship_attribution._internal.features.average.character_frequencies import (
@@ -18,8 +18,8 @@ def file_name() -> Literal["character_frequencies_feature.json"]:
 
 
 @fixture
-def sample_character_counts() -> dict[str, int]:
-    return {"a": 1, "b": 2, "c": 3}
+def sample_character_counts() -> Counter[str]:
+    return Counter[str]({"a": 1, "b": 2, "c": 3})
 
 
 @fixture
@@ -29,7 +29,7 @@ def sample_all_characters_count() -> int:
 
 @fixture
 def json_data(
-    sample_character_counts: dict[str, int], sample_all_characters_count: int
+    sample_character_counts: Counter[str], sample_all_characters_count: int
 ) -> Json:
     return {
         "character_counts": sample_character_counts,
@@ -39,7 +39,7 @@ def json_data(
 
 @fixture
 def feature_instance(
-    sample_character_counts: dict[str, int], sample_all_characters_count: int
+    sample_character_counts: Counter[str], sample_all_characters_count: int
 ) -> CharacterFrequenciesFeature:
     return CharacterFrequenciesFeature(
         character_counts=sample_character_counts,

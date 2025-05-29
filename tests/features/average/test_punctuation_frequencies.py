@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Counter, Literal
 from pytest import fixture
 
 from authorship_attribution._internal.features.average.punctuation_frequencies import (
@@ -18,8 +18,8 @@ def file_name() -> Literal["punctuation_frequencies_feature.json"]:
 
 
 @fixture
-def sample_punctuation_counts() -> dict[str, int]:
-    return {".": 1, ",": 2, ";": 3}
+def sample_punctuation_counts() -> Counter[str]:
+    return Counter[str]({".": 1, ",": 2, ";": 3})
 
 
 @fixture
@@ -29,7 +29,7 @@ def sample_total_punctuation_count() -> int:
 
 @fixture
 def json_data(
-    sample_punctuation_counts: dict[str, int], sample_total_punctuation_count: int
+    sample_punctuation_counts: Counter[str], sample_total_punctuation_count: int
 ) -> Json:
     return {
         "punctuation_counts": sample_punctuation_counts,
@@ -39,7 +39,7 @@ def json_data(
 
 @fixture
 def feature_instance(
-    sample_punctuation_counts: dict[str, int], sample_total_punctuation_count: int
+    sample_punctuation_counts: Counter[str], sample_total_punctuation_count: int
 ) -> PunctuationFrequenciesFeature:
     return PunctuationFrequenciesFeature(
         punctuation_counts=sample_punctuation_counts,
