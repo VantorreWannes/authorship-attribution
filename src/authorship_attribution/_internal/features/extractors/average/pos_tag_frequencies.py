@@ -1,5 +1,7 @@
 from collections import Counter
-from authorship_attribution._internal.features.average.pos_tag_frequencies import PartOfSpeechTagFrequenciesFeature
+from authorship_attribution._internal.features.average.pos_tag_frequencies import (
+    PartOfSpeechTagFrequenciesFeature,
+)
 from authorship_attribution._internal.features.extractors.base.pos_tags import (
     PartOfSpeechTagFeatureExtractor,
 )
