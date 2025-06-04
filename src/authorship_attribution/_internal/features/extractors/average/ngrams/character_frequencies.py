@@ -10,7 +10,7 @@ from authorship_attribution._internal.helpers import ngrams
 from authorship_attribution._internal.types.aliases import Text
 
 
-class CharacterNgramsFeatureExtractor(LexicalFeatureExtractor):
+class CharacterNgramFrequenciesFeatureExtractor(LexicalFeatureExtractor):
     def __init__(self, text: Text, ngram_size: int) -> None:
         super().__init__(text)
         self.ngrams = ngrams([char for char in text], ngram_size)
@@ -23,6 +23,6 @@ class CharacterNgramsFeatureExtractor(LexicalFeatureExtractor):
 
     @override
     def feature(self) -> CharacterNgramFrequenciesFeature:
-        ngram_counts = self.ngram_counts()
-        all_ngrams_count = self.all_ngrams_count()
+        ngram_counts: Counter[str] = self.ngram_counts()
+        all_ngrams_count: int = self.all_ngrams_count()
         return CharacterNgramFrequenciesFeature(ngram_counts, all_ngrams_count)
