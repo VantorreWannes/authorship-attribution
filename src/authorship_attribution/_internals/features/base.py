@@ -1,8 +1,50 @@
 from abc import ABC, abstractmethod
-from authorship_attribution._internals.base_features import Feature
-from authorship_attribution._internals.helpers import ngrams
-from authorship_attribution._internals.types.aliases import Sentence, Text
+import json
+import re
+from typing import Any, Generator
+
 from nltk import pos_tag, sent_tokenize, word_tokenize
+from authorship_attribution._internals.types.aliases import Json, Sentence, Text
+
+
+def ngrams(sequence: list[str], n: int, join_char: str = "") -> list[str]:
+    if n <= 0:
+        return []
+    if len(sequence) < n:
+        return []
+    return [join_char.join(sequence[i : i + n]) for i in range(len(sequence) - n + 1)]
+
+
+class Feature(ABC):
+    @classmethod
+    def name(cls) -> str:
+        return re.sub(r"(?<!^)(?=[A-Z])", "_", cls.__name__).lower()
+
+    @classmethod
+    def file_name(cls) -> str:
+        return f"{cls.name()}.json"
+
+    def to_json(self) -> Json:
+        return dict[str, Any](self)
+
+    @classmethod
+    def from_json(cls, data: Json) -> "Feature":
+        return cls(**data)
+
+    def to_file(self, path: str) -> None:
+        json_data: Json = self.to_json()
+        with open(path, "w") as file:
+            json.dump(json_data, file, indent=4)
+
+    @classmethod
+    def from_file(cls, file_path: str) -> "Feature":
+        with open(file_path, "r") as file:
+            json_data = json.load(file)
+            return cls.from_json(json_data)
+
+    def __iter__(self) -> Generator[tuple[str, Any], Any, None]:
+        for key in self.__dict__:
+            yield key, getattr(self, key)
 
 
 class FeatureExtractor(ABC):
