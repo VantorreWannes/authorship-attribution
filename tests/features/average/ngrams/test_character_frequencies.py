@@ -1,3 +1,6 @@
+from authorship_attribution._internal.features.base.base import Feature
+
+
 from collections import Counter
 from pytest import fixture
 
@@ -16,11 +19,11 @@ def name() -> str:
 def file_name() -> str:
     return "character_ngram_frequencies_feature.json"
 
-
+@fixture
 def ngram_counts() -> Counter[str]:
     return Counter({"ab": 3, "bc": 2, "cd": 1})
 
-
+@fixture
 def all_ngrams_count() -> int:
     return 5
 
@@ -60,7 +63,7 @@ def test_from_json(
     ngram_counts: Counter[str],
     all_ngrams_count: int,
 ) -> None:
-    feature = CharacterNgramFrequenciesFeature.from_json(data=json)
+    feature: Feature = CharacterNgramFrequenciesFeature.from_json(data=json)
     assert isinstance(feature, CharacterNgramFrequenciesFeature)
     assert feature.ngram_counts == ngram_counts
     assert feature.all_ngrams_count == all_ngrams_count
