@@ -86,7 +86,7 @@ class WordsFeatureExtractor(TextFeatureExtractor):
 class PosTagFeatureExtractor(WordsFeatureExtractor):
     def __init__(self, text: Text) -> None:
         super().__init__(text)
-        self.part_of_speech_tags = [tag for _, tag in pos_tag(self.words)]
+        self.pos_tags = [tag for _, tag in pos_tag(self.words)]
 
 
 class CharacterNgramsFeatureExtractor(CharactersFeatureExtractor):
