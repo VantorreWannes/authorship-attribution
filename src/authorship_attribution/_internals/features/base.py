@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import json
 import re
+import string
 from typing import Any, Generator
 
 from nltk import pos_tag, sent_tokenize, word_tokenize
@@ -87,3 +88,9 @@ class WordNgramsFeatureExtractor(WordsFeatureExtractor):
     def __init__(self, text: Text, ngram_size: int) -> None:
         super().__init__(text)
         self.ngrams = ngrams(self.words, ngram_size)
+
+
+class PunctuationFeatureExtractor(TextFeatureExtractor):
+    def __init__(self, text: Text) -> None:
+        super().__init__(text)
+        self.punctuations = [char for char in self.text if char in string.punctuation]
