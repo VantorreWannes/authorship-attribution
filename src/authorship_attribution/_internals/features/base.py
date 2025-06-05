@@ -5,7 +5,12 @@ import string
 from typing import Any, Generator
 
 from nltk import pos_tag, sent_tokenize, word_tokenize
-from authorship_attribution._internals.types.aliases import Character, Json, Sentence, Text
+from authorship_attribution._internals.types.aliases import (
+    Character,
+    Json,
+    Sentence,
+    Text,
+)
 
 
 def ngrams(sequence: list[str], n: int, join_char: str = "") -> list[str]:
@@ -99,4 +104,6 @@ class WordNgramsFeatureExtractor(WordsFeatureExtractor):
 class PunctuationFeatureExtractor(CharactersFeatureExtractor):
     def __init__(self, text: Text) -> None:
         super().__init__(text)
-        self.punctuations = [char for char in self.characters if char in string.punctuation]
+        self.punctuations = [
+            char for char in self.characters if char in string.punctuation
+        ]
