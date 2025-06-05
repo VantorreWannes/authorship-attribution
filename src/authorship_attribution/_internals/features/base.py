@@ -60,6 +60,12 @@ class TextFeatureExtractor(FeatureExtractor):
         self.text: Text = text
 
 
+class CharactersFeatureExtractor(TextFeatureExtractor):
+    def __init__(self, text: Text) -> None:
+        super().__init__(text)
+        self.characters = [char for char in text]
+
+
 class SentencesFeatureExtractor(TextFeatureExtractor):
     def __init__(self, text: Text) -> None:
         super().__init__(text)
@@ -78,10 +84,10 @@ class PosTagFeatureExtractor(WordsFeatureExtractor):
         self.part_of_speech_tags = [tag for _, tag in pos_tag(self.words)]
 
 
-class CharacterNgramsFeatureExtractor(TextFeatureExtractor):
+class CharacterNgramsFeatureExtractor(CharactersFeatureExtractor):
     def __init__(self, text: Text, ngram_size: int) -> None:
         super().__init__(text)
-        self.ngrams = ngrams(list[str](self.text), ngram_size)
+        self.ngrams = ngrams(self.characters, ngram_size)
 
 
 class WordNgramsFeatureExtractor(WordsFeatureExtractor):
@@ -90,7 +96,7 @@ class WordNgramsFeatureExtractor(WordsFeatureExtractor):
         self.ngrams = ngrams(self.words, ngram_size)
 
 
-class PunctuationFeatureExtractor(TextFeatureExtractor):
+class PunctuationFeatureExtractor(CharactersFeatureExtractor):
     def __init__(self, text: Text) -> None:
         super().__init__(text)
-        self.punctuations = [char for char in self.text if char in string.punctuation]
+        self.punctuations = [char for char in self.characters if char in string.punctuation]
