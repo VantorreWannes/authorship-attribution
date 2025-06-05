@@ -2,7 +2,7 @@ from collections import Counter
 from typing import override
 from authorship_attribution._internals.features.base import (
     Feature,
-    PosTagFeatureExtractor,
+    PosTagsFeatureExtractor,
 )
 from authorship_attribution._internals.types.aliases import PosTag
 
@@ -24,7 +24,7 @@ class AveragePosTagFrequenciesFeature(Feature):
         }
 
 
-class AveragePosTagFrequenciesFeatureExtractor(PosTagFeatureExtractor):
+class AveragePosTagFrequenciesFeatureExtractor(PosTagsFeatureExtractor):
     def pos_tag_counts(self) -> Counter[PosTag]:
         return Counter[PosTag](self.pos_tags)
 

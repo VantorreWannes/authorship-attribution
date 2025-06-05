@@ -5,6 +5,7 @@ import string
 from typing import Any, Generator
 
 from nltk import pos_tag, sent_tokenize, word_tokenize
+from nltk.corpus import stopwords
 from authorship_attribution._internals.types.aliases import (
     Character,
     Json,
@@ -83,7 +84,7 @@ class WordsFeatureExtractor(TextFeatureExtractor):
         self.words = word_tokenize(text)
 
 
-class PosTagFeatureExtractor(WordsFeatureExtractor):
+class PosTagsFeatureExtractor(WordsFeatureExtractor):
     def __init__(self, text: Text) -> None:
         super().__init__(text)
         self.pos_tags = [tag for _, tag in pos_tag(self.words)]
@@ -101,9 +102,15 @@ class WordNgramsFeatureExtractor(WordsFeatureExtractor):
         self.ngrams = ngrams(self.words, ngram_size)
 
 
-class PunctuationFeatureExtractor(CharactersFeatureExtractor):
+class PunctuationsFeatureExtractor(CharactersFeatureExtractor):
     def __init__(self, text: Text) -> None:
         super().__init__(text)
         self.punctuations = [
             char for char in self.characters if char in string.punctuation
         ]
+
+
+class StopwordsFeatureExtractor(WordsFeatureExtractor):
+    def __init__(self, text: Text) -> None:
+        super().__init__(text)
+        self.stopwords = [word for word in self.words if word in stopwords.words()]

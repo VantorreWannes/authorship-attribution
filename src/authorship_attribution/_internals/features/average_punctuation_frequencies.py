@@ -2,7 +2,7 @@ from collections import Counter
 from typing import override
 from authorship_attribution._internals.features.base import (
     Feature,
-    PunctuationFeatureExtractor,
+    PunctuationsFeatureExtractor,
 )
 from authorship_attribution._internals.types.aliases import Punctuation
 
@@ -24,7 +24,7 @@ class AveragePunctuationFrequenciesFeature(Feature):
         }
 
 
-class AveragePunctuationFrequenciesFeatureExtractor(PunctuationFeatureExtractor):
+class AveragePunctuationFrequenciesFeatureExtractor(PunctuationsFeatureExtractor):
     def punctuation_counts(self) -> Counter[Punctuation]:
         return Counter[Punctuation](self.punctuations)
 
