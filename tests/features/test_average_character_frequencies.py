@@ -1,6 +1,3 @@
-from _pytest.python_api import ApproxBase
-
-
 from collections import Counter
 from pytest import approx, fixture
 
