@@ -6,3 +6,4 @@ type Sentence = str
 type Text = str
 type NGram = str
 type Character = str
+type PosTag = str
