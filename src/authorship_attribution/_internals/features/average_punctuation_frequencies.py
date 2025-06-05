@@ -1,5 +1,9 @@
 from collections import Counter
-from authorship_attribution._internals.features.base import Feature
+from typing import override
+from authorship_attribution._internals.features.base import (
+    Feature,
+    PunctuationFeatureExtractor,
+)
 from authorship_attribution._internals.types.aliases import Punctuation
 
 
@@ -18,3 +22,19 @@ class AveragePunctuationFrequenciesFeature(Feature):
             char: count / self.all_punctuations_count
             for char, count in self.punctuation_counts.items()
         }
+
+
+class AveragePunctuationFrequenciesFeatureExtractor(PunctuationFeatureExtractor):
+    def punctuation_counts(self) -> Counter[Punctuation]:
+        return Counter[Punctuation](self.punctuations)
+
+    def all_punctuations_count(self) -> int:
+        return len(self.punctuations)
+
+    @override
+    def feature(self) -> AveragePunctuationFrequenciesFeature:
+        punctuation_counts: Counter[Punctuation] = self.punctuation_counts()
+        all_punctuations_count: int = self.all_punctuations_count()
+        return AveragePunctuationFrequenciesFeature(
+            punctuation_counts, all_punctuations_count
+        )
