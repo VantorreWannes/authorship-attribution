@@ -5,7 +5,7 @@ import string
 from typing import Any, Generator
 
 from nltk import pos_tag, sent_tokenize, word_tokenize
-from authorship_attribution._internals.types.aliases import Json, Sentence, Text
+from authorship_attribution._internals.types.aliases import Character, Json, Sentence, Text
 
 
 def ngrams(sequence: list[str], n: int, join_char: str = "") -> list[str]:
@@ -63,7 +63,7 @@ class TextFeatureExtractor(FeatureExtractor):
 class CharactersFeatureExtractor(TextFeatureExtractor):
     def __init__(self, text: Text) -> None:
         super().__init__(text)
-        self.characters = [char for char in text]
+        self.characters: list[Character] = [char for char in text]
 
 
 class SentencesFeatureExtractor(TextFeatureExtractor):
