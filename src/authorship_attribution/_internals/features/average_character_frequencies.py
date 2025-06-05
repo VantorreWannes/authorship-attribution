@@ -15,9 +15,9 @@ class AverageCharacterFrequenciesFeature(Feature):
         self.character_counts = character_counts
         self.all_characters_count = all_characters_count
 
-    def average_character_frequencies(self) -> dict[str, float]:
+    def average_character_frequencies(self) -> dict[Character, float]:
         if self.all_characters_count == 0:
-            return dict[str, float]()
+            return dict[Character, float]()
         return {
             char: count / self.all_characters_count
             for char, count in self.character_counts.items()
@@ -33,8 +33,8 @@ class AverageCharacterFrequenciesFeatureExtractor(CharactersFeatureExtractor):
 
     @override
     def feature(self) -> AverageCharacterFrequenciesFeature:
-        character_counts = self.character_counts()
-        all_characters_count = self.all_characters_count()
+        character_counts: Counter[Character] = self.character_counts()
+        all_characters_count: int = self.all_characters_count()
         return AverageCharacterFrequenciesFeature(
             character_counts, all_characters_count
         )
