@@ -1,6 +1,9 @@
 from pytest import approx, fixture
 
-from authorship_attribution._internals.features.average_word_lengths import AverageWordLengthFeature, AverageWordLengthFeatureExtractor
+from authorship_attribution._internals.features.average_word_lengths import (
+    AverageWordLengthFeature,
+    AverageWordLengthFeatureExtractor,
+)
 
 
 @fixture
@@ -24,9 +27,7 @@ def average_word_length() -> float:
 
 
 @fixture
-def feature(
-    summed_word_lengths: int, words_count: int
-) -> AverageWordLengthFeature:
+def feature(summed_word_lengths: int, words_count: int) -> AverageWordLengthFeature:
     return AverageWordLengthFeature(summed_word_lengths, words_count)
 
 
@@ -54,4 +55,3 @@ def test_average_word_length(
     average_word_length: float,
 ) -> None:
     assert feature.average_word_length() == approx(average_word_length, abs=0.01)
-

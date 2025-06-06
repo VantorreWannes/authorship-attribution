@@ -4,6 +4,7 @@ from authorship_attribution._internals.features.average_stopwords_ratio import (
     AverageStopwordsRatioFeatureExtractor,
 )
 
+
 @fixture
 def text() -> str:
     return "This is a test sentence with some stopwords"
@@ -25,9 +26,7 @@ def average_stopwords_ratio() -> float:
 
 
 @fixture
-def feature(
-    stopwords_count: int, words_count: int
-) -> AverageStopwordsRatioFeature:
+def feature(stopwords_count: int, words_count: int) -> AverageStopwordsRatioFeature:
     return AverageStopwordsRatioFeature(stopwords_count, words_count)
 
 
@@ -54,4 +53,6 @@ def test_average_stopwords_ratio(
     feature: AverageStopwordsRatioFeature,
     average_stopwords_ratio: float,
 ) -> None:
-    assert feature.average_stopwords_ratio() == approx(average_stopwords_ratio, abs=0.01)
+    assert feature.average_stopwords_ratio() == approx(
+        average_stopwords_ratio, abs=0.01
+    )
