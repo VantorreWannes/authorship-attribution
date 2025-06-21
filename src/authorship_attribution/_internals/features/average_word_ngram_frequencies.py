@@ -22,3 +22,22 @@ class AverageWordNgramFrequenciesFeature(Feature):
             ngram: count / self.all_word_ngrams_count
             for ngram, count in self.word_ngram_counts.items()
         }
+
+
+class AverageWordNgramFrequenciesFeatureExtractor(WordNgramsFeatureExtractor):
+    def __init__(self, text: Text, ngram_size: int) -> None:
+        super().__init__(text, ngram_size)
+
+    def word_ngram_counts(self) -> Counter[NGram]:
+        return Counter[NGram](self.ngrams)
+
+    def all_word_ngrams_count(self) -> int:
+        return len(self.ngrams)
+
+    @override
+    def feature(self) -> AverageWordNgramFrequenciesFeature:
+        word_ngram_counts: Counter[NGram] = self.word_ngram_counts()
+        all_word_ngrams_count: int = self.all_word_ngrams_count()
+        return AverageWordNgramFrequenciesFeature(
+            word_ngram_counts, all_word_ngrams_count
+        )
