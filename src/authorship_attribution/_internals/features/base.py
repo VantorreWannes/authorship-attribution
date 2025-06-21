@@ -9,12 +9,13 @@ from nltk.corpus import stopwords
 from authorship_attribution._internals.types.aliases import (
     Character,
     Json,
+    NGram,
     Sentence,
     Text,
 )
 
 
-def ngrams(sequence: list[str], n: int, join_char: str = "") -> list[str]:
+def ngrams(sequence: list[str], n: int, join_char: str = "") -> list[NGram]:
     if n <= 0:
         return []
     if len(sequence) < n:
