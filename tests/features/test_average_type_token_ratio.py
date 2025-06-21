@@ -50,6 +50,7 @@ def test_words_count(
 ) -> None:
     assert feature_extractor.words_count() == words_count
 
+
 def test_average_type_token_ratio(
     feature: AverageTypeTokenRatioFeature,
     average_type_token_ratio: float,
