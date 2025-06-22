@@ -25,7 +25,7 @@ def all_pos_tags_count() -> int:
 
 @fixture
 def average_pos_tag_frequencies() -> dict[PosTag, float]:
-    return {"NN": 0.5, "NNS": 0 + 0.25, "VBP": 0.25}
+    return {"NN": 0.5, "NNS": 0.25, "VBP": 0.25}
 
 
 @fixture
