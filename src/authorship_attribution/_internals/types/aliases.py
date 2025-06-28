@@ -8,3 +8,6 @@ type NGram = str
 type Character = str
 type PosTag = str
 type Punctuation = Character
+type Id = int
+type AuthorId = Id
+type BookId = Id
