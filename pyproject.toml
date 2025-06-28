@@ -3,13 +3,9 @@ name = "authorship-attribution"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-authors = [
-    { name = "Wannes Vantorre", email = "vantorrewannes@gmail.com" }
-]
+authors = [{ name = "Wannes Vantorre", email = "vantorrewannes@gmail.com" }]
 requires-python = ">=3.14"
-dependencies = [
-    "nltk>=3.9.1",
-]
+dependencies = ["nltk>=3.9.1"]
 
 [project.scripts]
 authorship-attribution = "authorship_attribution:main"
@@ -19,8 +15,4 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
-dev = [
-    "pytest>=8.3.5",
-    "pytest-cov>=6.1.1",
-    "pytest-mock>=3.14.0",
-]
+dev = ["pytest>=8.3.5", "pytest-cov>=6.1.1", "pytest-mock>=3.14.0"]
