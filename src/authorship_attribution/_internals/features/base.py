@@ -25,12 +25,12 @@ def ngrams(sequence: list[str], n: int, join_char: str = "") -> list[NGram]:
 
 class Feature(ABC):
     @classmethod
-    def name(cls) -> str:
+    def feature_name(cls) -> str:
         return re.sub(r"(?<!^)(?=[A-Z])", "_", cls.__name__).lower()
 
     @classmethod
     def file_name(cls) -> str:
-        return f"{cls.name()}.json"
+        return f"{cls.feature_name()}.json"
 
     def to_json(self) -> Json:
         return dict[str, Any](self)
