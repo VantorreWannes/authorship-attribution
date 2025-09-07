@@ -178,10 +178,6 @@ class FeatureExtractor:
     Feature extractor combining:
     - Char n-gram TF-IDF + SVD (compact stylometric signal)
     - Lightweight function-word and stylistic statistics (optionally scaled)
-
-    Notes:
-      - fit() learns TF-IDF vocab, SVD basis, and function-word scaler.
-      - transform() returns float32 features for efficiency.
     """
 
     char_ngram_range: Tuple[int, int] = (3, 5)
@@ -190,6 +186,7 @@ class FeatureExtractor:
     text_lowercase: bool = True
     use_function_words: bool = True
     random_state: int = 42
+    min_df: int = 2  # new: configurable min_df
 
     # Internal components (initialized in __post_init__)
     char_vec: TfidfVectorizer = field(init=False, repr=False)
@@ -204,7 +201,7 @@ class FeatureExtractor:
             analyzer="char",
             ngram_range=self.char_ngram_range,
             lowercase=self.text_lowercase,
-            min_df=2,
+            min_df=self.min_df,
             max_features=self.max_char_features,
             sublinear_tf=True,
             dtype=np.float32,  # type: ignore[arg-type]

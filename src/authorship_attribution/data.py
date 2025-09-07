@@ -126,10 +126,12 @@ def sample_pairs(
     neg_pairs_arr = np.asarray(neg_pairs, dtype=int)
 
     pairs = np.vstack([pos_pairs_arr, neg_pairs_arr])
-    labels = np.hstack([
-        np.ones(len(pos_pairs_arr), dtype=int),
-        np.zeros(len(neg_pairs_arr), dtype=int),
-    ])
+    labels = np.hstack(
+        [
+            np.ones(len(pos_pairs_arr), dtype=int),
+            np.zeros(len(neg_pairs_arr), dtype=int),
+        ]
+    )
 
     # Shuffle
     p = rng.permutation(len(pairs))

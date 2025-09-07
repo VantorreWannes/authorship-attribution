@@ -1,4 +1,8 @@
 {
     "python-envs.pythonProjects": [],
-    "python-envs.defaultEnvManager": "ms-python.python:venv"
+    "python-envs.defaultEnvManager": "ms-python.python:venv",
+    "projectExporter.customExclusions": [
+        "aa_model/cache/*",
+        ".ruff_cache/*"
+    ]
 }

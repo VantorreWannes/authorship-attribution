@@ -6,6 +6,7 @@ from typing import Any, Dict
 import numpy as np
 from joblib import dump, load
 from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
 
 from authorship_attribution.features import FeatureExtractor
 from authorship_attribution.utils import ModelMeta
@@ -54,8 +55,9 @@ class ModelBundle:
     classifier: LogisticRegression
     threshold: float
     meta: ModelMeta
+    pair_scaler: StandardScaler | None = None  # new: standardize pairwise features
 
-    _FORMAT_VERSION: int = 2  # bump if on-disk structure changes
+    _FORMAT_VERSION: int = 3  # bumped due to added pair_scaler
 
     def save(self, path: str) -> None:
         """
@@ -67,13 +69,14 @@ class ModelBundle:
             "classifier": self.classifier,
             "threshold": float(self.threshold),
             "meta": self.meta,
+            "pair_scaler": self.pair_scaler,
         }
         dump(payload, path)
 
     @staticmethod
     def load(path: str) -> "ModelBundle":
         obj = load(path)
-        # Backward compatibility: if older dumps saved the dataclass directly
+        # Backward compatibility
         if isinstance(obj, ModelBundle):
             return obj
         if isinstance(obj, dict) and "format_version" in obj:
@@ -82,6 +85,7 @@ class ModelBundle:
                 classifier=obj["classifier"],
                 threshold=float(obj["threshold"]),
                 meta=obj["meta"],
+                pair_scaler=obj.get("pair_scaler", None),
             )
         raise ValueError("Unknown model file format.")
 
@@ -104,6 +108,8 @@ class Verifier:
         XA = extractor.transform([text_a])
         XB = extractor.transform([text_b])
         pf = pairwise_features(XA, XB)
+        if self.bundle.pair_scaler is not None:
+            pf = self.bundle.pair_scaler.transform(pf)
         prob = clf.predict_proba(pf)[0, 1]
         return float(prob)
 
