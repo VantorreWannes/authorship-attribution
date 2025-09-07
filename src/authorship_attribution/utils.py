@@ -1,75 +1,66 @@
 from __future__ import annotations
-import numpy as np
+
+import hashlib
+import json
 from dataclasses import dataclass
-from typing import Dict, Any
+from pathlib import Path
+from typing import Any, Dict, Sequence
+
+import numpy as np
+from sklearn.metrics import accuracy_score, f1_score as sk_f1_score, roc_auc_score
 
 
-def find_best_threshold(y_true: np.ndarray, y_prob: np.ndarray) -> float:
-    # Maximize F1; search over percentiles of predicted probabilities
-    candidates = np.unique(np.percentile(y_prob, np.linspace(0, 100, 200)))
-    best_t = 0.5
-    best_f1 = -1.0
+def find_best_threshold(
+    y_true: np.ndarray,
+    y_prob: np.ndarray,
+    *,
+    n_steps: int = 200,
+) -> float:
+    """
+    Pick threshold (by percentiles of y_prob) that maximizes F1.
+    """
+    if y_true.ndim != 1 or y_prob.ndim != 1 or y_true.shape[0] != y_prob.shape[0]:
+        raise ValueError("y_true and y_prob must be 1D arrays of the same length.")
+    if n_steps <= 1:
+        return 0.5
+
+    # Avoid degenerate candidates by deduplicating
+    candidates = np.unique(np.percentile(y_prob, np.linspace(0, 100, n_steps)))
+    best_t, best_f1 = 0.5, -1.0
     for t in candidates:
         y_pred = (y_prob >= t).astype(int)
-        f1 = f1_score(y_true, y_pred)
+        f1 = sk_f1_score(y_true, y_pred, zero_division=0)  # pyright: ignore[reportArgumentType]
         if f1 > best_f1:
             best_f1 = f1
-            best_t = t
-    return float(best_t)
-
-
-def f1_score(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    tp = np.sum((y_true == 1) & (y_pred == 1))
-    fp = np.sum((y_true == 0) & (y_pred == 1))
-    fn = np.sum((y_true == 1) & (y_pred == 0))
-    if tp + fp == 0 or tp + fn == 0:
-        return 0.0
-    precision = tp / (tp + fp)
-    recall = tp / (tp + fn)
-    if precision + recall == 0:
-        return 0.0
-    return 2 * precision * recall / (precision + recall)
+            best_t = float(t)
+    return best_t
 
 
 def metrics_at_threshold(
-    y_true: np.ndarray, y_prob: np.ndarray, threshold: float
-) -> Dict[str, Any]:
+    y_true: np.ndarray,
+    y_prob: np.ndarray,
+    threshold: float,
+) -> Dict[str, float]:
+    """
+    Compute accuracy/F1 at a fixed threshold using sklearn metrics.
+    """
     y_pred = (y_prob >= threshold).astype(int)
-    acc = float(np.mean(y_pred == y_true))
-    f1 = f1_score(y_true, y_pred)
-    return {"accuracy": acc, "f1": f1, "threshold": threshold}
+    acc = float(accuracy_score(y_true, y_pred))
+    f1 = float(sk_f1_score(y_true, y_pred, zero_division=0))  # pyright: ignore[reportArgumentType]
+    return {"accuracy": acc, "f1": f1, "threshold": float(threshold)}
 
 
 def roc_auc(y_true: np.ndarray, y_prob: np.ndarray) -> float:
-    # Simple AUC computation without sklearn dependency beyond core
-    # Sort by probability descending
-    order = np.argsort(-y_prob)
-    y = y_true[order]
-    pos = np.sum(y == 1)
-    neg = np.sum(y == 0)
+    """
+    Compute ROC AUC via sklearn. Returns NaN if not defined.
+    """
+    y_true = np.asarray(y_true)
+    y_prob = np.asarray(y_prob)
+    pos = int(np.sum(y_true == 1))
+    neg = int(np.sum(y_true == 0))
     if pos == 0 or neg == 0:
         return float("nan")
-    tpr = 0.0
-    fpr = 0.0
-    last_prob = None
-    auc = 0.0
-    tp = 0
-    fp = 0
-    for i, yi in enumerate(y):
-        if yi == 1:
-            tp += 1
-        else:
-            fp += 1
-        # add area when probability changes or at the end
-        prob = y_prob[order[i]]
-        if last_prob is None:
-            last_prob = prob
-        if prob != last_prob or i == len(y) - 1:
-            auc += (fp / neg - fpr) * (tp / pos + tpr) / 2.0
-            fpr = fp / neg
-            tpr = tp / pos
-            last_prob = prob
-    return float(auc)
+    return float(roc_auc_score(y_true, y_prob))
 
 
 @dataclass
@@ -82,3 +73,56 @@ class ModelMeta:
     text_lowercase: bool
     tokenizer: str
     notes: str = ""
+    version: str = "1.0.0"
+
+
+# ------------- caching helpers ------------- #
+
+
+def sha256_update(obj: bytes | str, h: hashlib._Hash) -> None:
+    if isinstance(obj, str):
+        h.update(obj.encode("utf-8"))
+    else:
+        h.update(obj)
+
+
+def file_sha256(path: str | Path, chunk_size: int = 1 << 20) -> str:
+    """
+    Streaming SHA-256 of a file's content.
+    """
+    p = Path(path)
+    h = hashlib.sha256()
+    with p.open("rb") as f:
+        while True:
+            b = f.read(chunk_size)
+            if not b:
+                break
+            h.update(b)
+    return h.hexdigest()
+
+
+def texts_sha256(texts: Sequence[str]) -> str:
+    """
+    Hash a sequence of texts deterministically (length-prefixed).
+    """
+    h = hashlib.sha256()
+    for t in texts:
+        b = t.encode("utf-8", errors="replace")
+        sha256_update(str(len(b)), h)
+        h.update(b)
+        sha256_update("|", h)
+    return h.hexdigest()
+
+
+def params_sha256(params: Any) -> str:
+    """
+    Hash an arbitrary JSON-serializable structure deterministically.
+    """
+    s = json.dumps(params, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(s.encode("utf-8")).hexdigest()
+
+
+def ensure_dir(path: str | Path) -> Path:
+    p = Path(path)
+    p.mkdir(parents=True, exist_ok=True)
+    return p

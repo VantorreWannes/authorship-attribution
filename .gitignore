@@ -12,3 +12,4 @@ wheels/
 # Custom
 data
 input
+aa_model/cache/

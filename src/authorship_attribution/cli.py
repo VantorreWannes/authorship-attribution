@@ -1,12 +1,15 @@
 from __future__ import annotations
+
 import argparse
 import json
+from pathlib import Path
+from typing import Optional
 
 from authorship_attribution.models import Verifier
 from authorship_attribution.train import train
 
 
-def train_main():
+def train_main() -> int:
     p = argparse.ArgumentParser(description="Train an authorship verification model.")
     p.add_argument("--csv", required=True, help="Path to CSV with columns: author,text")
     p.add_argument("--text-col", default="text")
@@ -21,6 +24,8 @@ def train_main():
     p.add_argument("--no-function-words", action="store_true")
     p.add_argument("--no-lowercase", action="store_true")
     p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--no-cache", action="store_true", help="Disable caching.")
+    p.add_argument("--cache-dir", type=str, default=None, help="Custom cache directory.")
     args = p.parse_args()
 
     res = train(
@@ -28,9 +33,7 @@ def train_main():
         text_col=args.text_col,
         author_col=args.author_col,
         out_dir=args.out_dir,
-        max_pos_per_author=args.max_pos_per_author
-        if args.max_pos_per_author > 0
-        else None,
+        max_pos_per_author=args.max_pos_per_author if args.max_pos_per_author > 0 else None,
         negatives_per_positive=args.negatives_per_positive,
         char_ngram_range=(args.char_min, args.char_max),
         max_char_features=args.max_char_features,
@@ -38,20 +41,31 @@ def train_main():
         use_function_words=not args.no_function_words,
         text_lowercase=not args.no_lowercase,
         seed=args.seed,
+        use_cache=not args.no_cache,
+        cache_dir=args.cache_dir,
     )
     print(json.dumps(res, indent=2))
+    return 0
 
 
-def eval_main():
-    # For now eval is identical to train's validation report; users can retrain or split externally.
+def eval_main() -> int:
     print("Use aa-train to see validation metrics and a saved model.")
     return 0
 
 
-def verify_main():
-    p = argparse.ArgumentParser(
-        description="Verify if two texts are by the same author."
-    )
+def _read_text_arg(text: Optional[str], file: Optional[str]) -> str:
+    if text is not None:
+        return text
+    if file is None:
+        raise ValueError("Either a text or a file path must be provided.")
+    path = Path(file)
+    if not path.is_file():
+        raise FileNotFoundError(f"File not found: {file}")
+    return path.read_text(encoding="utf-8")
+
+
+def verify_main() -> int:
+    p = argparse.ArgumentParser(description="Verify if two texts are by the same author.")
     p.add_argument("--model", required=True, help="Path to aa_model.joblib")
     g = p.add_mutually_exclusive_group(required=True)
     g.add_argument("--text-a", help="Text A as string")
@@ -61,16 +75,10 @@ def verify_main():
     h.add_argument("--file-b", help="Path to file for Text B")
     args = p.parse_args()
 
-    if args.text_a is not None:
-        text_a = args.text_a
-    else:
-        text_a = open(args.file_a, "r", encoding="utf-8").read()
-
-    if args.text_b is not None:
-        text_b = args.text_b
-    else:
-        text_b = open(args.file_b, "r", encoding="utf-8").read()
+    text_a = _read_text_arg(args.text_a, args.file_a)
+    text_b = _read_text_arg(args.text_b, args.file_b)
 
     verifier = Verifier.from_path(args.model)
     res = verifier.verify(text_a, text_b)
     print(json.dumps(res, indent=2))
+    return 0

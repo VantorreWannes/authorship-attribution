@@ -1,23 +1,102 @@
 from __future__ import annotations
-from typing import Dict, Any
-import os
+
 import logging
+import os
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict
+
 import numpy as np
+from joblib import dump, load
 from sklearn.linear_model import LogisticRegression
 
-from .data import load_author_corpus, group_split_by_author, sample_pairs
+from .data import group_split_by_author, load_author_corpus, sample_pairs
 from .features import FeatureExtractor
 from .models import ModelBundle, pairwise_features
-from .utils import find_best_threshold, metrics_at_threshold, roc_auc, ModelMeta
+from .utils import (
+    ModelMeta,
+    ensure_dir,
+    find_best_threshold,
+    metrics_at_threshold,
+    params_sha256,
+    roc_auc,
+    file_sha256,
+    texts_sha256,
+)
 
 
 def build_pair_matrix(embeddings: np.ndarray, pairs: np.ndarray) -> np.ndarray:
-    feats = []
-    for i, j in pairs:
-        u = embeddings[i]
-        v = embeddings[j]
-        feats.append(pairwise_features(u, v))
-    return np.vstack(feats).astype(np.float32)
+    """
+    Vectorized pairwise feature construction.
+    embeddings: (N, D)
+    pairs: (K, 2) with index pairs into embeddings
+    returns: (K, 2D+3)
+    """
+    U = embeddings[pairs[:, 0]]
+    V = embeddings[pairs[:, 1]]
+    return pairwise_features(U, V)
+
+
+@dataclass(frozen=True)
+class TrainingConfig:
+    csv_path: str
+    text_col: str = "text"
+    author_col: str = "author"
+    out_dir: str = "aa_model"
+    max_pos_per_author: int | None = 200
+    negatives_per_positive: int = 1
+    char_ngram_range: tuple[int, int] = (3, 5)
+    max_char_features: int = 50_000
+    svd_dim: int = 256
+    use_function_words: bool = True
+    text_lowercase: bool = True
+    seed: int = 42
+    use_cache: bool = True
+    cache_dir: str | None = None
+
+
+def _cache_paths(
+    cfg: TrainingConfig, data_key: str, train_key: str, texts_key: str
+) -> Dict[str, Path]:
+    cache_root = Path(cfg.cache_dir or Path(cfg.out_dir) / "cache")
+    ensure_dir(cache_root)
+    extractor_key = params_sha256({
+        "data_key": data_key,
+        "train_key": train_key,
+        "char_ngram_range": list(cfg.char_ngram_range),
+        "max_char_features": cfg.max_char_features,
+        "svd_dim": cfg.svd_dim,
+        "use_function_words": cfg.use_function_words,
+        "text_lowercase": cfg.text_lowercase,
+        "seed": cfg.seed,
+        "extractor_class": "FeatureExtractor",
+    })
+    emb_all_key = params_sha256({
+        "extractor_key": extractor_key,
+        "texts_key": texts_key,
+    })
+    return {
+        "extractor": cache_root / f"extractor_{extractor_key}.joblib",
+        "emb_all": cache_root / f"emb_all_{emb_all_key}.npz",
+        # pairs also depend on seed and sampling params, build per split below
+    }
+
+
+def _pairs_paths(
+    cfg: TrainingConfig,
+    split_name: str,
+    authors_hash: str,
+) -> Path:
+    cache_root = Path(cfg.cache_dir or Path(cfg.out_dir) / "cache")
+    ensure_dir(cache_root)
+    key = params_sha256({
+        "split": split_name,
+        "authors_hash": authors_hash,
+        "max_pos_per_author": cfg.max_pos_per_author,
+        "negatives_per_positive": cfg.negatives_per_positive,
+        "seed": cfg.seed if split_name == "train" else cfg.seed + 1,
+    })
+    return cache_root / f"pairs_{split_name}_{key}.npz"
 
 
 def train(
@@ -28,111 +107,205 @@ def train(
     max_pos_per_author: int | None = 200,
     negatives_per_positive: int = 1,
     char_ngram_range: tuple[int, int] = (3, 5),
-    max_char_features: int = 50000,
+    max_char_features: int = 50_000,
     svd_dim: int = 256,
     use_function_words: bool = True,
     text_lowercase: bool = True,
     seed: int = 42,
+    use_cache: bool = True,
+    cache_dir: str | None = None,
 ) -> Dict[str, Any]:
+    """
+    Train an authorship verification model and save a serialized bundle.
+    Caching (when enabled) reuses fitted extractor, embeddings, and sampled pairs.
+    """
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
     )
-    os.makedirs(out_dir, exist_ok=True)
-    # 1) Load data
-    logging.info(f"Loading data from {csv_path}...")
-    df, texts, authors = load_author_corpus(
-        csv_path,
+    logger = logging.getLogger(__name__)
+
+    cfg = TrainingConfig(
+        csv_path=csv_path,
         text_col=text_col,
         author_col=author_col,
+        out_dir=out_dir,
+        max_pos_per_author=max_pos_per_author,
+        negatives_per_positive=negatives_per_positive,
+        char_ngram_range=char_ngram_range,
+        max_char_features=max_char_features,
+        svd_dim=svd_dim,
+        use_function_words=use_function_words,
+        text_lowercase=text_lowercase,
+        seed=seed,
+        use_cache=use_cache,
+        cache_dir=cache_dir,
+    )
+
+    os.makedirs(cfg.out_dir, exist_ok=True)
+
+    # 1) Load and minimally filter data
+    logger.info("Loading data from %s", cfg.csv_path)
+    df, texts, authors = load_author_corpus(
+        cfg.csv_path,
+        text_col=cfg.text_col,
+        author_col=cfg.author_col,
         min_text_len=50,
         min_texts_per_author=2,
     )
-    logging.info(f"Loaded {len(texts)} texts from {len(set(authors))} authors.")
+    logger.info("Loaded %d texts from %d authors.", len(texts), len(set(authors)))
 
-    idx_train, idx_val = group_split_by_author(authors, train_frac=0.8, seed=seed)
+    # Data-level fingerprints
+    data_key = params_sha256({
+        "file_sha256": file_sha256(cfg.csv_path),
+        "text_col": cfg.text_col,
+        "author_col": cfg.author_col,
+        "min_text_len": 50,
+        "min_texts_per_author": 2,
+    })
+    texts_key = texts_sha256(texts)
+
+    # 2) Author-disjoint split (deterministic for seed)
+    idx_train, idx_val = group_split_by_author(authors, train_frac=0.8, seed=cfg.seed)
     texts_train = [texts[i] for i in idx_train]
     texts_val = [texts[i] for i in idx_val]
     authors_train = [authors[i] for i in idx_train]
     authors_val = [authors[i] for i in idx_val]
 
-    # 2) Fit feature extractor on train texts only
-    logging.info("Fitting feature extractor...")
-    extractor = FeatureExtractor(
-        char_ngram_range=char_ngram_range,
-        max_char_features=max_char_features,
-        svd_dim=svd_dim,
-        text_lowercase=text_lowercase,
-        use_function_words=use_function_words,
-        random_state=seed,
-    )
-    extractor.fit(texts_train)
-
-    # 3) Precompute embeddings
-    logging.info("Transforming texts to embeddings...")
-    X_train = extractor.transform(texts_train)
-    X_val = extractor.transform(texts_val)
-
-    # 4) Create pair datasets (author-disjoint)
-    logging.info("Creating training and validation pairs...")
-    pairs_train, y_train = sample_pairs(
-        authors_train,
-        max_pos_per_author=max_pos_per_author,
-        negatives_per_positive=negatives_per_positive,
-        seed=seed,
-    )
-    pairs_val, y_val = sample_pairs(
-        authors_val,
-        max_pos_per_author=max_pos_per_author,
-        negatives_per_positive=negatives_per_positive,
-        seed=seed + 1,
-    )
-    logging.info(
-        f"Created {len(pairs_train)} training pairs and {len(pairs_val)} validation pairs."
+    train_key = texts_sha256(texts_train)
+    paths = _cache_paths(
+        cfg, data_key=data_key, train_key=train_key, texts_key=texts_key
     )
 
-    # Remap pair indices to split subarray indices
-    logging.info("Building pair matrices...")
+    # 3) Fit or load feature extractor (fit on train only; no leakage)
+    if cfg.use_cache and paths["extractor"].is_file():
+        logger.info("Cache hit: loading extractor from %s", paths["extractor"])
+        extractor: FeatureExtractor = load(paths["extractor"])
+    else:
+        logger.info("Fitting feature extractor...")
+        extractor = FeatureExtractor(
+            char_ngram_range=cfg.char_ngram_range,
+            max_char_features=cfg.max_char_features,
+            svd_dim=cfg.svd_dim,
+            text_lowercase=cfg.text_lowercase,
+            use_function_words=cfg.use_function_words,
+            random_state=cfg.seed,
+        ).fit(texts_train)
+        if cfg.use_cache:
+            logger.info("Cache save: extractor -> %s", paths["extractor"])
+            dump(extractor, paths["extractor"])
+
+    # 4) Transform texts to embeddings (reuse for all texts if cached)
+    if cfg.use_cache and paths["emb_all"].is_file():
+        logger.info("Cache hit: loading all embeddings from %s", paths["emb_all"])
+        X_all = np.load(paths["emb_all"])["X"]
+    else:
+        logger.info("Transforming texts to embeddings (all)...")
+        X_all = extractor.transform(texts)
+        if cfg.use_cache:
+            logger.info("Cache save: embeddings -> %s", paths["emb_all"])
+            np.savez_compressed(paths["emb_all"], X=X_all)
+
+    X_train = X_all[idx_train]
+    X_val = X_all[idx_val]
+
+    # 5) Pairs (author-disjoint), cache per split
+    train_pairs_path = _pairs_paths(
+        cfg, "train", authors_hash=texts_sha256(authors_train)
+    )
+    val_pairs_path = _pairs_paths(cfg, "val", authors_hash=texts_sha256(authors_val))
+
+    if cfg.use_cache and train_pairs_path.is_file():
+        logger.info("Cache hit: loading train pairs from %s", train_pairs_path)
+        with np.load(train_pairs_path) as npz:
+            pairs_train = npz["pairs"]
+            y_train = npz["labels"]
+    else:
+        logger.info("Creating training pairs...")
+        pairs_train, y_train = sample_pairs(
+            authors_train,
+            max_pos_per_author=cfg.max_pos_per_author,
+            negatives_per_positive=cfg.negatives_per_positive,
+            seed=cfg.seed,
+        )
+        if cfg.use_cache:
+            logger.info("Cache save: train pairs -> %s", train_pairs_path)
+            np.savez_compressed(train_pairs_path, pairs=pairs_train, labels=y_train)
+
+    if cfg.use_cache and val_pairs_path.is_file():
+        logger.info("Cache hit: loading val pairs from %s", val_pairs_path)
+        with np.load(val_pairs_path) as npz:
+            pairs_val = npz["pairs"]
+            y_val = npz["labels"]
+    else:
+        logger.info("Creating validation pairs...")
+        pairs_val, y_val = sample_pairs(
+            authors_val,
+            max_pos_per_author=cfg.max_pos_per_author,
+            negatives_per_positive=cfg.negatives_per_positive,
+            seed=cfg.seed + 1,
+        )
+        if cfg.use_cache:
+            logger.info("Cache save: val pairs -> %s", val_pairs_path)
+            np.savez_compressed(val_pairs_path, pairs=pairs_val, labels=y_val)
+
+    logger.info(
+        "Prepared %d train pairs and %d val pairs.",
+        len(pairs_train),
+        len(pairs_val),
+    )
+
+    # 6) Build pairwise feature matrices
+    logger.info("Building pair feature matrices...")
     Pf_train = build_pair_matrix(X_train, pairs_train)
     Pf_val = build_pair_matrix(X_val, pairs_val)
 
-    # 5) Train classifier
-    logging.info("Training classifier...")
-    clf = LogisticRegression(max_iter=2000, class_weight="balanced", solver="lbfgs")
+    # 7) Train classifier
+    logger.info("Training classifier...")
+    clf = LogisticRegression(
+        max_iter=2000,
+        class_weight="balanced",
+        solver="lbfgs",
+        random_state=cfg.seed,
+    )
     clf.fit(Pf_train, y_train)
 
-    # 6) Calibrate threshold on val
-    logging.info("Calibrating threshold on validation set...")
+    # 8) Calibrate threshold on val
+    logger.info("Calibrating threshold on validation set...")
     val_probs = clf.predict_proba(Pf_val)[:, 1]
     threshold = find_best_threshold(y_val, val_probs)
 
-    # 7) Evaluate
-    logging.info("Evaluating model...")
+    # 9) Evaluate
+    logger.info("Evaluating model...")
     auc = roc_auc(y_val, val_probs)
     m = metrics_at_threshold(y_val, val_probs, threshold=threshold)
-    logging.info(
-        f"Validation AUC: {auc:.4f}, Accuracy: {m['accuracy']:.4f}, F1: {m['f1']:.4f} at threshold {threshold:.4f}"
+    logger.info(
+        "Validation AUC: %.4f, Accuracy: %.4f, F1: %.4f at threshold %.4f",
+        auc,
+        m["accuracy"],
+        m["f1"],
+        threshold,
     )
 
-    # 8) Save model
-    logging.info("Saving model bundle...")
+    # 10) Save model bundle
+    logger.info("Saving model bundle...")
     bundle = ModelBundle(
         extractor=extractor,
         classifier=clf,
         threshold=float(threshold),
         meta=ModelMeta(
             feature_dim=int(X_train.shape[1]),
-            svd_dim=svd_dim,
-            char_ngram_range=char_ngram_range,
-            max_char_features=max_char_features,
-            use_function_words=use_function_words,
-            text_lowercase=text_lowercase,
+            svd_dim=cfg.svd_dim,
+            char_ngram_range=cfg.char_ngram_range,
+            max_char_features=cfg.max_char_features,
+            use_function_words=cfg.use_function_words,
+            text_lowercase=cfg.text_lowercase,
             tokenizer="regex_word",
-            notes="Pairwise logistic on |u-v|, u*v plus cos/L1/L2 from char n-gram SVD + function words",
+            notes="Pairwise logistic on |u-v|, u*v + cosine + L1 + L2 from char n-gram SVD (+ function words).",
         ),
     )
-    model_path = os.path.join(out_dir, "aa_model.joblib")
+    model_path = os.path.join(cfg.out_dir, "aa_model.joblib")
     bundle.save(model_path)
-    logging.info(f"Model saved to {model_path}")
+    logger.info("Model saved to %s", model_path)
 
     return {
         "model_path": model_path,
@@ -144,6 +317,10 @@ def train(
         "n_val_pairs": int(len(Pf_val)),
         "n_train_texts": int(len(texts_train)),
         "n_val_texts": int(len(texts_val)),
+        "cache": {
+            "used": bool(cfg.use_cache),
+            "cache_dir": str(Path(cfg.cache_dir or Path(cfg.out_dir) / "cache")),
+        },
     }
 
 

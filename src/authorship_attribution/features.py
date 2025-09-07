@@ -1,16 +1,18 @@
 from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import List, Tuple
+
 import numpy as np
 import re
-from typing import List, Tuple
-from dataclasses import dataclass
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import StandardScaler
 
-# Simple tokenization
 _word_re = re.compile(r"[A-Za-z']+")
 
-FUNCTION_WORDS = [
-    # Common English function words (subset)
+# Subset of common English function words (can be extended)
+FUNCTION_WORDS: List[str] = [
     "a",
     "an",
     "the",
@@ -162,16 +164,42 @@ def simple_tokenize(text: str, lowercase: bool = True) -> List[str]:
     return _word_re.findall(t)
 
 
+def count_selected_punct(text: str) -> dict:
+    n = max(1, len(text))
+    return {
+        "comma": text.count(",") / n,
+        "period": text.count(".") / n,
+    }
+
+
 @dataclass
 class FeatureExtractor:
+    """
+    Feature extractor combining:
+    - Char n-gram TF-IDF + SVD (compact stylometric signal)
+    - Lightweight function-word and stylistic statistics (optionally scaled)
+
+    Notes:
+      - fit() learns TF-IDF vocab, SVD basis, and function-word scaler.
+      - transform() returns float32 features for efficiency.
+    """
+
     char_ngram_range: Tuple[int, int] = (3, 5)
-    max_char_features: int = 50000
+    max_char_features: int = 50_000
     svd_dim: int = 256
     text_lowercase: bool = True
     use_function_words: bool = True
     random_state: int = 42
 
-    def __post_init__(self):
+    # Internal components (initialized in __post_init__)
+    char_vec: TfidfVectorizer = field(init=False, repr=False)
+    svd: TruncatedSVD = field(init=False, repr=False)
+    fw_scaler: StandardScaler | None = field(default=None, init=False, repr=False)
+
+    # Cached dims
+    _fw_dim: int = field(default=0, init=False, repr=False)
+
+    def __post_init__(self) -> None:
         self.char_vec = TfidfVectorizer(
             analyzer="char",
             ngram_range=self.char_ngram_range,
@@ -179,68 +207,80 @@ class FeatureExtractor:
             min_df=2,
             max_features=self.max_char_features,
             sublinear_tf=True,
-            dtype=np.float32,  # pyright: ignore[reportArgumentType]
+            dtype=np.float32,  # type: ignore[arg-type]
         )
         self.svd = TruncatedSVD(
             n_components=self.svd_dim,
             random_state=self.random_state,
             algorithm="randomized",
         )
-        self._fw_mean = None
-        self._fw_std = None
+        if self.use_function_words:
+            # number of function words + 14 light features
+            self._fw_dim = len(FUNCTION_WORDS) + 14
+        else:
+            self._fw_dim = 0
 
-    def fit(self, texts: List[str]):
+    @property
+    def output_dim(self) -> int:
+        """
+        Number of output features after transform().
+        """
+        return self.svd_dim + self._fw_dim
+
+    def fit(self, texts: List[str]) -> "FeatureExtractor":
+        # Fit TF-IDF + SVD without creating an intermediate dense array
         X_char = self.char_vec.fit_transform(texts)
-        X_svd = self.svd.fit_transform(X_char)
-        _ = X_svd
+        self.svd.fit(X_char)
 
         if self.use_function_words:
             fw = self._function_word_features_batch(texts)
-            # standardize
-            self._fw_mean = fw.mean(axis=0, keepdims=True)
-            self._fw_std = fw.std(axis=0, keepdims=True) + 1e-6  # avoid div by zero
+            self.fw_scaler = StandardScaler().fit(fw)
 
         return self
 
     def transform(self, texts: List[str]) -> np.ndarray:
         X_char = self.char_vec.transform(texts)
         X_svd = self.svd.transform(X_char)
+
         if self.use_function_words:
             fw = self._function_word_features_batch(texts)
-            if self._fw_mean is None or self._fw_std is None:
+            if self.fw_scaler is None:
                 raise RuntimeError(
-                    "Function-word stats not initialized; call fit first."
+                    "Function-word scaler not initialized; call fit() first."
                 )
-            fw = (fw - self._fw_mean) / self._fw_std
-            return np.hstack([X_svd, fw]).astype(np.float32)
+            fw = self.fw_scaler.transform(fw)
+            out = np.hstack([X_svd, fw])
         else:
-            return X_svd.astype(np.float32)
+            out = X_svd
+        return out.astype(np.float32, copy=False)
 
+    # -------- internals -------- #
     def _function_word_features_batch(self, texts: List[str]) -> np.ndarray:
         vocab = {w: i for i, w in enumerate(FUNCTION_WORDS)}
         M = len(texts)
         F = len(vocab)
-        # F + 6 existing + 8 new light features = F + 14
         X = np.zeros((M, F + 14), dtype=np.float32)
         for m, text in enumerate(texts):
             toks = simple_tokenize(text, lowercase=True)
             n = len(toks)
             if n == 0:
+                # leave zeros
                 continue
-            counts = {}
-            for t in toks:
-                if t in vocab:
-                    counts[t] = counts.get(t, 0) + 1
-            for w, c in counts.items():
-                X[m, vocab[w]] = c / n
 
-            avg_word_len = np.mean([len(t) for t in toks]) if toks else 0.0
-            type_token_ratio = len(set(toks)) / n if n > 0 else 0.0
+            # function word relative frequencies
+            for t in toks:
+                idx = vocab.get(t)
+                if idx is not None:
+                    X[m, idx] += 1.0
+            X[m, :F] /= max(1, n)
+
+            avg_word_len = float(np.mean([len(t) for t in toks])) if toks else 0.0
+            type_token_ratio = float(len(set(toks)) / n) if n > 0 else 0.0
             punct = count_selected_punct(text)
             upper_ratio = sum(1 for ch in text if ch.isupper()) / max(1, len(text))
             digit_ratio = sum(1 for ch in text if ch.isdigit()) / max(1, len(text))
 
-            # Existing 6
+            # Six existing features
             X[m, F + 0] = avg_word_len
             X[m, F + 1] = type_token_ratio
             X[m, F + 2] = punct["comma"]
@@ -248,7 +288,7 @@ class FeatureExtractor:
             X[m, F + 4] = upper_ratio
             X[m, F + 5] = digit_ratio
 
-            # New cheap extras (8)
+            # Eight new light features
             txt_len = max(1, len(text))
             X[m, F + 6] = text.count("!") / txt_len
             X[m, F + 7] = text.count("?") / txt_len
@@ -260,11 +300,3 @@ class FeatureExtractor:
             X[m, F + 13] = text.count("...") / txt_len  # ellipsis approx
 
         return X
-
-
-def count_selected_punct(text: str) -> dict:
-    n = max(1, len(text))
-    return {
-        "comma": text.count(",") / n,
-        "period": text.count(".") / n,
-    }

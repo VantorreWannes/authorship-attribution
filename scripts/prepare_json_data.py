@@ -183,8 +183,8 @@ def parse_args() -> argparse.Namespace:
         default=Path("data/raw/yelp_academic_dataset_review.json"),
     )
     p.add_argument("--out", type=Path, default=Path("data/yelp_reviews.csv"))
-    p.add_argument("--min-review-count", type=int, default=3)
-    p.add_argument("--min-review-length", type=int, default=200)
+    p.add_argument("--min-review-count", type=int, default=4)
+    p.add_argument("--min-review-length", type=int, default=500)
     p.add_argument("--chunksize", type=int, default=1_000_000)
     p.add_argument(
         "--log-level", type=str, default="DEBUG", help="DEBUG, INFO, WARNING, ERROR"
